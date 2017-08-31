@@ -21,6 +21,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonArray;
 import javax.json.JsonReader;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
@@ -121,20 +122,15 @@ public class RecipeResource {
         public Response getUserPantry(
         		@QueryParam("username") String username
         		){
-        	//JSONObject pantry;
+        	
         	//Gets the user pantry ingredients
-        	//Use builder (to-do)
-        	//try{
         	String pantry = RecipeManager.getUserPantry(username); //JSONObject.parse(RecipeManager.getUserPantry(username));
-        	//Read in the request body as JSON
+        	//Read in the requested pantry as a JSON
             JsonReader reader = Json.createReader(new StringReader(pantry));
-            JsonObject pantryJSON = reader.readObject();
+            JsonArray pantryJSON = reader.readArray();
             reader.close();
         	
-        	//        	}
-//        	catch(Exception e){
-//        		return null;
-//        	}
+        	
 //        	JSONArray pantryArray = pantry.getJSONArray("ingredients");
 //            for (int i = 0; i < jsonArray.length(); i++) {
 //                JSONObject explrObject = jsonArray.getJSONObject(i);
