@@ -38,6 +38,7 @@ import com.mongodb.client.result.UpdateResult;
 import com.mongodb.util.JSON;
 import com.ibm.json.java.JSONObject;
 import java.util.Map;
+import java.io.StringReader;
 
 @Path("recipes")
 public class RecipeResource {
@@ -125,7 +126,12 @@ public class RecipeResource {
         	//Use builder (to-do)
         	//try{
         	String pantry = RecipeManager.getUserPantry(username); //JSONObject.parse(RecipeManager.getUserPantry(username));
-//        	}
+        	//Read in the request body as JSON
+            JsonReader reader = Json.createReader(new StringReader(pantry));
+            JsonObject pantryJSON = reader.readObject();
+            reader.close();
+        	
+        	//        	}
 //        	catch(Exception e){
 //        		return null;
 //        	}
@@ -147,7 +153,7 @@ public class RecipeResource {
         	
         	
         	//XXFor now (no error)
-        	return Response.ok(pantry).build(); //JSONObject.serialize(pantry);
+        	return Response.ok(pantryJSON.toString()).build(); //JSONObject.serialize(pantry);
         }
         
         
