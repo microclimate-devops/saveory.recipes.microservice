@@ -5,6 +5,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -22,6 +23,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.ServerAddress;
@@ -34,27 +36,37 @@ import com.mongodb.client.result.DeleteResult;
 import static com.mongodb.client.model.Updates.*;
 import com.mongodb.client.result.UpdateResult;
 import com.mongodb.util.JSON;
+import com.ibm.json.java.JSONObject;
+import java.util.Map;
 
 @Path("recipes")
 public class RecipeResource {
 		private static String db_name = "saveory_app";
 		private static String db_client_uri = "mongodb://sapphires:saveoryArmory@sapphires-db.rtp.raleigh.ibm.com/saveory_app";
 		private static String collection_name = "recipes";
+		private static String auxCollection = "users";
 		MongoClient mongoClient = new MongoClient(new MongoClientURI(db_client_uri));
-        HttpClient httpclient = HttpClientBuilder.create().build();
+        
 
         @GET
          @Produces(MediaType.APPLICATION_JSON)
-         public String getRecipes(){
+         public String getRecipes(
+        			//@QueryParam("username") String username
+        			){
         		MongoDatabase database = mongoClient.getDatabase(db_name);
-        		MongoCollection<Document> collection = database.getCollection(collection_name);
-        		MongoCursor<Document> iterator = collection.find().iterator();
+        		MongoCollection<Document> recipeCollection = database.getCollection(collection_name);
+        		MongoCollection<Document> userCollection = database.getCollection(auxCollection);
+        		
+        		//JSONArray recipe = rCollection.getJsonObject("ingredients":[])
+        		
+        		MongoCursor<Document> recipeIterator = recipeCollection.find().iterator();
+        		MongoCursor<Document> userIterator = userCollection.find().iterator();
         		
         		BasicDBList list = new BasicDBList();
-        		while(iterator.hasNext()){
-        			Document doc = iterator.next();
+        		while(recipeIterator.hasNext()){
+        			Document doc = recipeIterator.next();
         			list.add(doc);
-        		}		
+        		}
         		return JSON.serialize(list);
         		
                 /*Ingredient i1 = new Ingredient("Milk", "fdsfs12e1", "3 Monjitas", 1, true, "03/11/18", null);
@@ -66,6 +78,80 @@ public class RecipeResource {
                 return r;*/
         }
 
+        @GET
+        @Path("/test")
+        @Produces(MediaType.APPLICATION_JSON)
+        public String getRecipeJSON(
+        		@QueryParam("username") String username
+        		){
+        	MongoDatabase database = mongoClient.getDatabase(db_name);
+    		MongoCollection<Document> recipeCollection = database.getCollection(collection_name);
+    		MongoCollection<Document> userCollection = database.getCollection(auxCollection);
+    		
+    		//Document query = new Document().append("name","CAP");
+    		//Document query2 = new Document().append("ingredients",[]);
+    				
+    		//MongoCursor<Document> recipe = rCollection.find(query);
+    		
+    		MongoCursor<Document> recipeIterator = recipeCollection.find().iterator();
+    		//MongoCursor<Document> userIterator = userCollection.find().iterator();
+    		
+    		BasicDBList list = new BasicDBList();
+    		while(recipeIterator.hasNext()){
+    			Document doc = recipeIterator.next();
+    			//list.add(doc);
+    			//Document current = Document.parse((String) doc.get("ingredients"));
+    			ArrayList<Document> currentIngredients = (ArrayList<Document>) doc.get("ingredients");
+    			for(Document current : currentIngredients)
+    				list.add(current);
+    		}
+    		
+    		//QueryParam test case
+    		//if(username != null)
+    			//list.add(new Document().append("username", username));
+    		return JSON.serialize(list);
+    		
+        	
+        }
+        
+        @GET
+        @Path("/test2")
+        @Produces(MediaType.APPLICATION_JSON)
+        public Response getUserPantry(
+        		@QueryParam("username") String username
+        		){
+        	//JSONObject pantry;
+        	//Gets the user pantry ingredients
+        	//Use builder (to-do)
+        	//try{
+        	String pantry = RecipeManager.getUserPantry(username); //JSONObject.parse(RecipeManager.getUserPantry(username));
+//        	}
+//        	catch(Exception e){
+//        		return null;
+//        	}
+//        	JSONArray pantryArray = pantry.getJSONArray("ingredients");
+//            for (int i = 0; i < jsonArray.length(); i++) {
+//                JSONObject explrObject = jsonArray.getJSONObject(i);
+        //}
+        	
+//        	BasicDBList list = new BasicDBList();
+//        	//Map pantryM = pantry.toMap();
+//    		for(String current : pantryM.keySet()){
+//    			//Document doc = current.next();
+//    			list.add((BasicDBObject) pantryM.get((String) current));
+//    			//Document current = Document.parse((String) doc.get("ingredients"));
+//    			//ArrayList<Document> currentIngredients = (ArrayList<Document>) doc.get("ingredients");
+//    			//for(Document current : currentIngredients)
+//    			//	list.add(current);
+//    		}
+        	
+        	
+        	//XXFor now (no error)
+        	return Response.ok(pantry).build(); //JSONObject.serialize(pantry);
+        }
+        
+        
+        
         @GET
          @Path("/{recipeId}")
          @Produces(MediaType.APPLICATION_JSON)
