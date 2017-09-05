@@ -125,12 +125,17 @@ public class RecipeResource {
         		@QueryParam("username") String username
         		){
         	
-        	//Gets the user pantry ingredients
-        	String pantry = RecipeManager.getUserPantry(username); //JSONObject.parse(RecipeManager.getUserPantry(username));
-        	pantry = pantry.substring(1, pantry.length() - 1);
-        	//Read in the requested pantry as a JSON
-        	JSONObject pantryJSON = new JSONObject(pantry);
-        	JSONArray pantryArray = pantryJSON.getJSONArray("pantry");
+        	String pantry = RecipeManager.getUserPantry(username);
+//        	//Gets the user pantry ingredients
+//        	String pantry = RecipeManager.getUserPantry(username); //JSONObject.parse(RecipeManager.getUserPantry(username));
+//        	pantry = pantry.substring(1, pantry.length() - 1); //Changes received JSON from array to object
+//        	
+//        	//Read in the requested pantry as a JSON
+//        	JSONObject pantryJSON = new JSONObject(pantry);
+//        	JSONArray pantryArray = pantryJSON.getJSONArray("pantry");
+//        	
+        	//
+        	
         	
         	
         	
@@ -159,7 +164,7 @@ public class RecipeResource {
         	
         	
         	//XXFor now (no error)
-        	return Response.ok(pantryArray.toString()).build(); //JSONObject.serialize(pantry);
+        	return Response.ok(pantry).build(); //pantryArray.toString()).build(); //JSONObject.serialize(pantry);
         }
         
         

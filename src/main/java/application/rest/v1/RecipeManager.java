@@ -36,42 +36,52 @@ import static com.mongodb.client.model.Updates.*;
 import com.mongodb.client.result.UpdateResult;
 import com.mongodb.util.JSON;
 import java.util.HashMap;
-
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 public class RecipeManager {
 	static HttpClient httpclient = HttpClientBuilder.create().build();
 	
 	public static String getUserPantry(String username){
-		String showPantryResponse;
-		HttpGet getUserPantry = new HttpGet("http://pantry-service:9080/Pantry/pantry?user=" + username);
+		String user = RecipeManager.getUser(username);
+		if(user.contains("failure") || user.contains("failed") || user.equals(""))
+			return user;
+		
+		//Changes received JSON from array to object
+		user = user.substring(1, user.length() - 1); 
+    	
+    	//Read in the requested pantry as a JSON
+    	JSONObject userJSON = new JSONObject(user);
+    	JSONArray pantryArray = userJSON.getJSONArray("pantry");
+        
+    	return pantryArray.toString();
+	
+	}
+	
+	public static String getUser(String username){
+		String showUserResponse;
+		HttpGet getUser = new HttpGet("http://pantry-service:9080/Pantry/pantry?user=" + username);
 
         try{
             //Execute request
-            HttpResponse getUserPantryResponse = httpclient.execute(getUserPantry);
-            HttpEntity respEntity = getUserPantryResponse.getEntity();
+            HttpResponse getUserResponse = httpclient.execute(getUser);
+            HttpEntity entity = getUserResponse.getEntity();
 
             //Check if the response entity is there
-            if(respEntity != null){
-                    showPantryResponse = EntityUtils.toString(respEntity);
+            if(entity != null){
+                    showUserResponse = EntityUtils.toString(entity);
             }
             else{
-            	showPantryResponse = "{\"status\":\"failure, no response entity from backend "
+            	showUserResponse = "{\"status\":\"failure, no response entity from backend "
             						+ "when retrieving the user's pantry\"}";
             }
         }
         catch (Exception e) {
-        	showPantryResponse = "{\"status\":\"failed while executing GET request to the backend "
+        	showUserResponse = "{\"status\":\"failed while executing GET request to the backend "
                 					+ "for a recipe\", \"error\":\""+e.getMessage()+"\"}";
         }
         
-        return showPantryResponse;
-        
-        
-	
+        return showUserResponse;
 	}
-	
-	
-	
-	
 
 }
