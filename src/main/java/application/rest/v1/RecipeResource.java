@@ -128,8 +128,8 @@ public class RecipeResource {
         	//Gets the user pantry ingredients
         	String pantry = RecipeManager.getUserPantry(username); //JSONObject.parse(RecipeManager.getUserPantry(username));
         	//Read in the requested pantry as a JSON
-        	JSONObject pantryJSON = new JSONObject(pantry);
-        	JSONArray pantryArray = pantryJSON.getJSONArray("pantry");
+        	//JSONObject pantryJSON = new JSONObject(pantry);
+        	//JSONArray pantryArray = pantryJSON.getJSONArray("pantry");
         	
         	
         	
@@ -158,7 +158,7 @@ public class RecipeResource {
         	
         	
         	//XXFor now (no error)
-        	return Response.ok(pantryArray.toString()).build(); //JSONObject.serialize(pantry);
+        	return Response.ok(pantry).build();  //pantryArray.toString()).build(); //JSONObject.serialize(pantry);
         }
         
         
