@@ -127,8 +127,10 @@ public class RecipeResource {
         	String pantry = RecipeManager.getUserPantry(username); //JSONObject.parse(RecipeManager.getUserPantry(username));
         	//Read in the requested pantry as a JSON
             JsonReader reader = Json.createReader(new StringReader(pantry));
-            JsonArray pantryJSON = reader.readArray();
+            JsonObject pantryJSON = reader.readObject();
             reader.close();
+            
+            //pantryJSON ***LAST LINE - IN WORK
         	
         	
 //        	JSONArray pantryArray = pantry.getJSONArray("ingredients");
