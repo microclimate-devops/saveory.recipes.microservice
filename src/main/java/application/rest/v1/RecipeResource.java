@@ -38,6 +38,7 @@ import static com.mongodb.client.model.Updates.*;
 import com.mongodb.client.result.UpdateResult;
 import com.mongodb.util.JSON;
 import com.ibm.json.java.JSONObject;
+import org.json.JSONArray;
 import java.util.Map;
 import java.io.StringReader;
 
@@ -126,9 +127,14 @@ public class RecipeResource {
         	//Gets the user pantry ingredients
         	String pantry = RecipeManager.getUserPantry(username); //JSONObject.parse(RecipeManager.getUserPantry(username));
         	//Read in the requested pantry as a JSON
-            JsonReader reader = Json.createReader(new StringReader(pantry));
-            JsonObject pantryJSON = reader.readObject();
-            reader.close();
+        	JSONObject pantryJSON = new JSONObject(pantry);
+        	JSONArray pantryArray = pantryJSON.getJSONArray("pantry");
+        	
+        	
+        	
+//            JsonReader reader = Json.createReader(new StringReader(pantry));
+//            JsonObject pantryJSON = reader.readObject();
+//            reader.close();
             
             //pantryJSON ***LAST LINE - IN WORK
         	
@@ -151,7 +157,7 @@ public class RecipeResource {
         	
         	
         	//XXFor now (no error)
-        	return Response.ok(pantryJSON.toString()).build(); //JSONObject.serialize(pantry);
+        	return Response.ok(pantryArray.toString()).build(); //JSONObject.serialize(pantry);
         }
         
         
