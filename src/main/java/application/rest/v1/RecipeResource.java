@@ -198,7 +198,7 @@ public class RecipeResource {
     		
     		MongoCursor<Document> recipeIterator = recipeCollection.find(colQuery).iterator();
     		
-    		Recipe r1 = RecipeManager.parseRecipe(recipeIterator);
+    		//Recipe r1 = RecipeManager.parseRecipe(recipeIterator);
     		
 //    		BasicDBList list = new BasicDBList();
 //    		while(recipeIterator.hasNext()){
@@ -211,7 +211,7 @@ public class RecipeResource {
 //    			for(Document current : currentIngredients)
 //    				list.add(current);
 //    		}
-            	return Response.ok(r1.getAuthor()).build();//Response.ok(r2.toString()).build();
+            	return Response.ok("Hello").build();//r1.getAuthor()).build();//Response.ok(r2.toString()).build();
          }
         
         @GET
