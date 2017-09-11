@@ -25,16 +25,19 @@ public class RecipeIngredient {
 			+ "@sapphires-db.rtp.raleigh.ibm.com:27017/saveory_app"));
 	
 	private String name;
-	private ArrayList<String> tags;
+	private String tag;
 	//private String id; Not sure if ID will be needed here
 	private String notes;
-	private double quantity;
-	public RecipeIngredient(String name, ArrayList<String> tags, String notes, double quantity) {
+	private Double quantity;
+	private String unit;
+	
+	public RecipeIngredient(String name, String tag, String notes, double quantity, String unit) {
 		this.name = name;
-		this.tags = tags;
+		this.tag = tag;
 		//this.id = id;
 		this.notes = notes;
 		this.quantity = quantity;
+		this.unit = unit;
 	}
 	
 	//Need to verify Objects
@@ -70,11 +73,11 @@ public class RecipeIngredient {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public ArrayList<String> getTags() {
-		return tags;
+	public String getTag() {
+		return tag;
 	}
-	public void setName(ArrayList<String> tags) {
-		this.tags = tags;
+	public void setTag(String tag) {
+		this.tag = tag;
 	}
 	//Not sure if ID will be needed here
 	/*public String getId() {
@@ -95,6 +98,45 @@ public class RecipeIngredient {
 	public void setQuantity(double quantity) {
 		this.quantity = quantity;
 	}
+	public String getUnit() {
+		return unit;
+	}
+	public void setUnit(String unit) {
+		this.unit = unit;
+	}
+	
+	
+	public static ArrayList<RecipeIngredient> parseRecipeIngredient(String ingredients){
+		ArrayList<RecipeIngredient> ingredientList = new ArrayList<>();
+		ArrayList<String> currIngredient = new ArrayList<>();
+		RecipeIngredient ri;
+		//Brackets and braces are removed
+		ingredients = ingredients.substring(17, ingredients.length()-1);
+		ingredients = ingredients.replaceAll("[\\{\\}]", "");
+		System.out.println(ingredients);
+		
+		//Documents inside each ingredient objects are split
+		String[] str2 = ingredients.split(",");
+		
+		//Iterates through all of the available ingredients
+		int i = 0;
+		while(i < str2.length){
+			//Iterates through the current ingredient values
+			for(int j = 0; j < 5 && i<str2.length; j++, i++){
+			//currIngredient is assigned to one of the ingredient object values
+			System.out.println(str2[i].split(":")[1]);
+			currIngredient.add(j, str2[i].split(":")[1]); //Keys and values are split
+			}
+			//Creates a new RecipeIngredient with the current ingredients values
+			ri = new RecipeIngredient(currIngredient.get(0), currIngredient.get(1), 
+					currIngredient.get(2), Double.parseDouble(currIngredient.get(3).substring(2,3)), currIngredient.get(4));
+			//Adds the recipe ingredient to the Recipe Ingredients list
+			ingredientList.add(ri);
+		}
+	
+		return ingredientList;
+	}
+
 	
 	
 }

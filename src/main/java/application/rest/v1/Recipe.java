@@ -29,21 +29,28 @@ public class Recipe {
 	private String name;
 	private String id;
 	private String author;
-	private HashMap<String, String> tags;
+	private ArrayList<String> tags = new ArrayList<String>();
 	private String description;
 	private String instructions;
 	private ArrayList<RecipeIngredient> ingredients = new ArrayList<RecipeIngredient>();
 	
 	
 	
-	public Recipe(String name, String id, String author, String description, String instructions,
-			HashMap<String, String> tags) {
+	public Recipe(String name, String id, String author, String description, String instructions) {
 		this.name = name;
 		this.id = id;
 		this.author = author;
 		this.description = description;
 		this.instructions = instructions;
-		this.tags = tags;
+	}
+	
+	public Recipe(){
+		name = "";
+		id = "";
+		author = "";
+		tags = null;
+		description = "";
+		instructions = "";
 	}
 	
 	//Need to verify the object types
@@ -60,8 +67,6 @@ public class Recipe {
 	}*/
 	
 	//public static Recipe toRecipe(Mongo)
-	
-	//public S
 	
 	public String getName() {
 		return name;
@@ -99,14 +104,17 @@ public class Recipe {
 	public void setIngredients(ArrayList<RecipeIngredient> ingredients) {
 		this.ingredients = ingredients;
 	}
-	public HashMap<String, String> getTags() {
+	public ArrayList<String> getTags() {
 		return tags;
 	}
-	public void setTags(HashMap<String, String> tags) {
+	public void setTags(ArrayList<String> tags) {
 		this.tags = tags;
 	}
+	public void addTag(String tag) {
+		tags.add(tag);
+	}
 	
-	public void addIngredient(RecipeIngredient i){
-		ingredients.add(i);
+	public void addIngredient(RecipeIngredient ingredient){
+		ingredients.add(ingredient);
 	}
 }

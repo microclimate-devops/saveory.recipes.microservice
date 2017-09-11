@@ -42,6 +42,12 @@ import org.json.JSONObject;
 import org.json.JSONArray;
 import java.util.Map;
 import java.io.StringReader;
+import com.fasterxml.jackson.databind.ObjectMapper; 
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.core.type.TypeReference;
+import org.mongojack.*;
+import com.mongodb.DBCollection;
+//import org.mongodb.DB;
 
 @Path("recipes")
 public class RecipeResource {
@@ -125,49 +131,88 @@ public class RecipeResource {
         		@QueryParam("username") String username
         		){
         	
+        	//Gets the user's pantry ingredients using the username in the query
         	String pantry = RecipeManager.getUserPantry(username);
-//        	//Gets the user pantry ingredients
-//        	String pantry = RecipeManager.getUserPantry(username); //JSONObject.parse(RecipeManager.getUserPantry(username));
-//        	pantry = pantry.substring(1, pantry.length() - 1); //Changes received JSON from array to object
-//        	
-//        	//Read in the requested pantry as a JSON
-//        	JSONObject pantryJSON = new JSONObject(pantry);
-//        	JSONArray pantryArray = pantryJSON.getJSONArray("pantry");
-//        	
-        	//
+        	
+        	//Get 1 recipe to compare its ingredients with the user's **TODO**
         	
         	
-        	
-        	
-//            JsonReader reader = Json.createReader(new StringReader(pantry));
-//            JsonObject pantryJSON = reader.readObject();
-//            reader.close();
-            
-            //pantryJSON ***LAST LINE - IN WORK
-        	
-        	
-//        	JSONArray pantryArray = pantry.getJSONArray("ingredients");
-//            for (int i = 0; i < jsonArray.length(); i++) {
-//                JSONObject explrObject = jsonArray.getJSONObject(i);
-        //}
-        	
-//        	BasicDBList list = new BasicDBList();
-//        	//Map pantryM = pantry.toMap();
-//    		for(String current : pantryM.keySet()){
-//    			//Document doc = current.next();
-//    			list.add((BasicDBObject) pantryM.get((String) current));
-//    			//Document current = Document.parse((String) doc.get("ingredients"));
-//    			//ArrayList<Document> currentIngredients = (ArrayList<Document>) doc.get("ingredients");
-//    			//for(Document current : currentIngredients)
-//    			//	list.add(current);
-//    		}
-        	
-        	
-        	//XXFor now (no error)
-        	return Response.ok(pantry).build(); //pantryArray.toString()).build(); //JSONObject.serialize(pantry);
+        	return Response.ok(pantry).build();
         }
         
+        @GET
+        @Path("/test3")
+        @Produces(MediaType.APPLICATION_JSON)
+        public Response getRecipeWMAP(
+        		@QueryParam("recipeId") String query){
+        	Recipe r1;
+        	ObjectMapper mapper = new ObjectMapper();
+        	ObjectWriter printer = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        	try{
+        	r1 = mapper.readValue("{"
+        		+ "\"name\" : \"Cereal and Milk\","
+        				+ "\"id\" : \"1\","
+        				+ "\"author\" : \"Bob Saget\","
+        				+ "\"tag\" : ["
+        				+ "\"dairy\","
+        				+ "\"vegetarian\""
+        				+ "],"
+        				+ "\"description\" : \"The simplest breakfast you'll ever make\","
+        				+ "\"instructions\" : \"Step 1: Pour cereal in bowl; Step 2: Pour milk in bowl\""
+        				+ "\"ingredients\" : ["
+        					+ "{"
+        					+ "\"name\" : \"Cereal\","
+	        				+ "\"tag\" : \"null\","
+	        				+ "\"description\" : \"Kellog's Brand\","
+	        				+ "\"quantity\" : \"1\","
+	        				+ "\"unit\" : \"cup\""
+	        				+ "},"
+	        				+ "{"
+	        				+ "\"name\" : \"Milk\","
+	        				+ "\"tag\" : \"dairy\","
+	        				+ "\"description\" : \"Kellog's Brand\","
+	        				+ "\"quantity\" : \"0.5\","
+	        				+ "\"unit\" : \"cup\""
+	        				+ "}"
+	        				+ "]"
+	        				+ "}", Recipe.class);
+        	}
+        	catch(Exception e){
+        		return Response.ok(e.getMessage()).build();
+        	}
+        	if (r1 != null)
+        		return Response.ok(r1.getName()).build();
+        	return null;
+        }
         
+        @GET
+        @Path("/test4")
+        @Produces(MediaType.APPLICATION_JSON)
+        public Response usingPOJO(
+        		@QueryParam("recipeId") String query){
+        	MongoDatabase database = mongoClient.getDatabase(db_name);
+    		MongoCollection<Document> recipeCollection = database.getCollection(collection_name);
+    		
+    		Document colQuery = new Document().append("name","CAP");
+    				
+    		
+    		MongoCursor<Document> recipeIterator = recipeCollection.find(colQuery).iterator();
+    		
+    		Recipe r1 = RecipeManager.parseRecipe(recipeIterator);
+    		
+//    		BasicDBList list = new BasicDBList();
+//    		while(recipeIterator.hasNext()){
+//    			Document doc = recipeIterator.next();
+//    			for(String curr : doc.keySet())
+//    				doc.get(curr);
+//    			//list.add(doc);
+//    			//Document current = Document.parse((String) doc.get("ingredients"));
+//    			ArrayList<Document> currentIngredients = (ArrayList<Document>) doc.get("ingredients");
+//    			for(Document current : currentIngredients)
+//    				list.add(current);
+//    		}
+            	return Response.ok(r1.getAuthor()).build();//Response.ok(r2.toString()).build();
+         }
         
         @GET
          @Path("/{recipeId}")
