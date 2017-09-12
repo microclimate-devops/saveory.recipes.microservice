@@ -31,10 +31,10 @@ public class Recipe {
 	private String id;
 	private String _id;
 	private String author;
-	private List<String> tag = new ArrayList<String>();
+	private List<String> tag;
 	private String description;
 	private String instructions;
-	private List<RecipeIngredient> ingredients = new ArrayList<RecipeIngredient>();
+	private List<RecipeIngredient> ingredients;
 	
 	
 	
@@ -42,8 +42,10 @@ public class Recipe {
 		this.name = name;
 		this.id = id;
 		this.author = author;
+		this.tag = null;
 		this.description = description;
 		this.instructions = instructions;
+		this.ingredients = null;
 	}
 	
 	public Recipe(){
@@ -111,13 +113,13 @@ public class Recipe {
 	public List<RecipeIngredient> getIngredients() {
 		return ingredients;
 	}
-	public void setIngredients(ArrayList<RecipeIngredient> ingredients) {
+	public void setIngredients(List<RecipeIngredient> ingredients) {
 		this.ingredients = ingredients;
 	}
 	public List<String> getTags() {
 		return tag;
 	}
-	public void setTags(ArrayList<String> tags) {
+	public void setTags(List<String> tags) {
 		this.tag = tags;
 	}
 	public void addTag(String tag) {
