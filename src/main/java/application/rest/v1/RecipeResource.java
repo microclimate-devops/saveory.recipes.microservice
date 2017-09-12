@@ -25,6 +25,7 @@ import javax.json.JsonArray;
 import javax.json.JsonReader;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.ServerAddress;
@@ -48,6 +49,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.mongojack.*;
 import com.mongodb.DBCollection;
 //import org.mongodb.DB;
+import com.mongodb.DBObject;
 
 @Path("recipes")
 public class RecipeResource {
@@ -188,7 +190,7 @@ public class RecipeResource {
         @GET
         @Path("/test4")
         @Produces(MediaType.APPLICATION_JSON)
-        public Response usingPOJO(
+        public Response usingParser(
         		@QueryParam("recipeId") String query){
         	MongoDatabase database = mongoClient.getDatabase(db_name);
     		MongoCollection<Document> recipeCollection = database.getCollection(collection_name);
@@ -212,6 +214,39 @@ public class RecipeResource {
 //    				list.add(current);
 //    		}
             	return Response.ok("Hello").build();//r1.getAuthor()).build();//Response.ok(r2.toString()).build();
+         }
+        
+        @GET
+        @Path("/test5")
+        @Produces(MediaType.APPLICATION_JSON)
+        public Response usingPOJO(
+        		@QueryParam("recipeId") String query){
+        	DB database = mongoClient.getDB(db_name);
+    		DBCollection recipeCollection = database.getCollection(collection_name);
+    		
+    		JacksonDBCollection<Recipe, String> coll = JacksonDBCollection.wrap(recipeCollection, 
+    				Recipe.class, String.class);
+    		
+    		
+    		//DBObject colQuery = new DBObject().append("name","CAP");
+    				
+    		
+    		Recipe recipe = coll.findOne(DBQuery.is("name", "CAP"));
+    		
+    		//Recipe r1 = RecipeManager.parseRecipe(recipeIterator);
+    		
+//    		BasicDBList list = new BasicDBList();
+//    		while(recipeIterator.hasNext()){
+//    			Document doc = recipeIterator.next();
+//    			for(String curr : doc.keySet())
+//    				doc.get(curr);
+//    			//list.add(doc);
+//    			//Document current = Document.parse((String) doc.get("ingredients"));
+//    			ArrayList<Document> currentIngredients = (ArrayList<Document>) doc.get("ingredients");
+//    			for(Document current : currentIngredients)
+//    				list.add(current);
+//    		}
+            	return Response.ok(recipe.getAuthor()).build();//r1.getAuthor()).build();//Response.ok(r2.toString()).build();
          }
         
         @GET
