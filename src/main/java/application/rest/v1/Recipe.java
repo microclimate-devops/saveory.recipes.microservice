@@ -7,6 +7,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mongodb.BasicDBList;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
@@ -23,11 +25,10 @@ import com.mongodb.util.JSON;
 
 @XmlRootElement
 public class Recipe {
-	MongoClient mongoClient = new MongoClient(new MongoClientURI("mongodb://sapphires:saveoryArmory"
-			+ "@sapphires-db.rtp.raleigh.ibm.com:27017/saveory_app"));
-
+	
 	private String name;
 	private String id;
+	private String _id;
 	private String author;
 	private ArrayList<String> tags = new ArrayList<String>();
 	private String description;
@@ -36,7 +37,7 @@ public class Recipe {
 	
 	
 	
-	public Recipe(String name, String id, String author, String description, String instructions) {
+	public Recipe(String name, String id, String _id, String author, String description, String instructions) {
 		this.name = name;
 		this.id = id;
 		this.author = author;
@@ -79,6 +80,14 @@ public class Recipe {
 	}
 	public void setId(String id) {
 		this.id = id;
+	}
+	@JsonProperty("_id")
+	public String get_Id() {
+		return _id;
+	}
+	@JsonProperty("_id")
+	public void set_Id(String _id) {
+		this._id = _id;
 	}
 	public String getAuthor() {
 		return author;

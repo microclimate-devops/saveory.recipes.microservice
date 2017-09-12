@@ -21,8 +21,6 @@ import com.mongodb.util.JSON;
 
 @XmlRootElement
 public class RecipeIngredient {
-	MongoClient mongoClient = new MongoClient(new MongoClientURI("mongodb://sapphires:saveoryArmory"
-			+ "@sapphires-db.rtp.raleigh.ibm.com:27017/saveory_app"));
 	
 	private String name;
 	private String tag;
