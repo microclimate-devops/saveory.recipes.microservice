@@ -2,6 +2,7 @@ package application.rest.v1;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.json.Json;
@@ -30,10 +31,10 @@ public class Recipe {
 	private String id;
 	private String _id;
 	private String author;
-	private ArrayList<String> tag = new ArrayList<String>();
+	private List<String> tag = new ArrayList<String>();
 	private String description;
 	private String instructions;
-	private ArrayList<RecipeIngredient> ingredients = new ArrayList<RecipeIngredient>();
+	private List<RecipeIngredient> ingredients = new ArrayList<RecipeIngredient>();
 	
 	
 	
@@ -107,13 +108,13 @@ public class Recipe {
 	public void setInstructions(String instructions) {
 		this.instructions = instructions;
 	}
-	public ArrayList<RecipeIngredient> getIngredients() {
+	public List<RecipeIngredient> getIngredients() {
 		return ingredients;
 	}
 	public void setIngredients(ArrayList<RecipeIngredient> ingredients) {
 		this.ingredients = ingredients;
 	}
-	public ArrayList<String> getTags() {
+	public List<String> getTags() {
 		return tag;
 	}
 	public void setTags(ArrayList<String> tags) {
