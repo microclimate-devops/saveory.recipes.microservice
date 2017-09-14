@@ -26,20 +26,25 @@ public class RecipeIngredient {
 	
 	private String name;
 	private List<String> tag;
-	//private String id; Not sure if ID will be needed here
-	private String notes;
+	private String description;
 	private String quantity;
 	private String unit;
 	
-	public RecipeIngredient(String name, String notes, String quantity, String unit) {
+	public RecipeIngredient(String name, String description, String quantity, String unit) {
 		this.name = name;
 		this.tag = null;
-		//this.id = id;
-		this.notes = notes;
+		this.description = description;
 		this.quantity = quantity;
 		this.unit = unit;
 	}
 	
+	public RecipeIngredient() {
+		this.name = "";
+		this.tag = null;
+		this.description = "";
+		this.quantity = "";
+		this.unit = "";
+	}
 	//Need to verify Objects
 	/*public DBObject toDBObject() {
 		List<String> tagList = tags;
@@ -86,11 +91,11 @@ public class RecipeIngredient {
 	public void setId(String id) {
 		this.id = id;
 	}*/
-	public String getNotes() {
-		return notes;
+	public String getDescription() {
+		return description;
 	}
-	public void setNotes(String notes) {
-		this.notes = notes;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	public String getQuantity() {
 		return quantity;
