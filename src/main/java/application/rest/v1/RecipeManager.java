@@ -117,41 +117,41 @@ public class RecipeManager {
 		return JSON.serialize(list);
 	}
 	
-	public static Recipe parseRecipe(MongoCursor<Document> recipeIterator){
-		//Empty Recipe Object
-		Recipe recipe = new Recipe();
-		
-		//Sets name for recipe
-		Document doc = recipeIterator.next();
-		recipe.setName(doc.getString("\"name\""));
-		
-		//Sets Id for recipe
-		doc = recipeIterator.next();
-		recipe.setId(doc.getString("\"id\""));
-		
-		//Sets Author for recipe
-		doc = recipeIterator.next();
-		recipe.setAuthor(doc.getString("\"author\""));
-		
-		//Sets Tags for recipe
-		doc = recipeIterator.next();
-		ArrayList<String> tags = RecipeManager.parseTags(doc.getString("\"tags\""));
-		
-		//Sets Description for recipe
-		doc = recipeIterator.next();
-		recipe.setDescription(doc.getString("\"description\""));
-		
-		//Sets Instructions for recipe
-		doc = recipeIterator.next();
-		recipe.setInstructions(doc.getString("\"instructions\""));
-		
-		//Sets Ingredients for recipe
-		doc = recipeIterator.next();
-		recipe.setIngredients(RecipeIngredient.parseRecipeIngredient(doc.getString("\"ingredients\"")));
-		
-		return recipe; 
-	}
-	
+//	public static Recipe parseRecipe(MongoCursor<Document> recipeIterator){
+//		//Empty Recipe Object
+//		Recipe recipe = new Recipe();
+//		
+//		//Sets name for recipe
+//		Document doc = recipeIterator.next();
+//		recipe.setName(doc.getString("\"name\""));
+//		
+//		//Sets Id for recipe
+//		doc = recipeIterator.next();
+//		recipe.setId(doc.getString("\"id\""));
+//		
+//		//Sets Author for recipe
+//		doc = recipeIterator.next();
+//		recipe.setAuthor(doc.getString("\"author\""));
+//		
+//		//Sets Tags for recipe
+//		doc = recipeIterator.next();
+//		ArrayList<String> tags = RecipeManager.parseTags(doc.getString("\"tags\""));
+//		
+//		//Sets Description for recipe
+//		doc = recipeIterator.next();
+//		recipe.setDescription(doc.getString("\"description\""));
+//		
+//		//Sets Instructions for recipe
+//		doc = recipeIterator.next();
+//		recipe.setInstructions(doc.getString("\"instructions\""));
+//		
+//		//Sets Ingredients for recipe
+//		doc = recipeIterator.next();
+//		recipe.setIngredients(RecipeIngredient.parseRecipeIngredient(doc.getString("\"ingredients\"")));
+//		
+//		return recipe; 
+//	}
+//	
 	public static ArrayList<String> parseTags(String tags){
 		//Empty object to be returned
 		ArrayList<String> tagsList = new ArrayList<>();
