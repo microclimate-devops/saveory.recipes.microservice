@@ -1,6 +1,8 @@
 package application.rest.v1;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -23,15 +25,15 @@ import com.mongodb.util.JSON;
 public class RecipeIngredient {
 	
 	private String name;
-	private String tag;
+	private List<String> tag;
 	//private String id; Not sure if ID will be needed here
 	private String notes;
-	private Double quantity;
+	private String quantity;
 	private String unit;
 	
-	public RecipeIngredient(String name, String tag, String notes, double quantity, String unit) {
+	public RecipeIngredient(String name, String notes, String quantity, String unit) {
 		this.name = name;
-		this.tag = tag;
+		this.tag = null;
 		//this.id = id;
 		this.notes = notes;
 		this.quantity = quantity;
@@ -71,10 +73,10 @@ public class RecipeIngredient {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getTag() {
+	public List<String> getTag() {
 		return tag;
 	}
-	public void setTag(String tag) {
+	public void setTag(List<String> tag) {
 		this.tag = tag;
 	}
 	//Not sure if ID will be needed here
@@ -90,10 +92,10 @@ public class RecipeIngredient {
 	public void setNotes(String notes) {
 		this.notes = notes;
 	}
-	public double getQuantity() {
+	public String getQuantity() {
 		return quantity;
 	}
-	public void setQuantity(double quantity) {
+	public void setQuantity(String quantity) {
 		this.quantity = quantity;
 	}
 	public String getUnit() {
@@ -104,36 +106,36 @@ public class RecipeIngredient {
 	}
 	
 	
-	public static ArrayList<RecipeIngredient> parseRecipeIngredient(String ingredients){
-		ArrayList<RecipeIngredient> ingredientList = new ArrayList<>();
-		ArrayList<String> currIngredient = new ArrayList<>();
-		RecipeIngredient ri;
-		//Brackets and braces are removed
-		ingredients = ingredients.substring(17, ingredients.length()-1);
-		ingredients = ingredients.replaceAll("[\\{\\}]", "");
-		System.out.println(ingredients);
-		
-		//Documents inside each ingredient objects are split
-		String[] str2 = ingredients.split(",");
-		
-		//Iterates through all of the available ingredients
-		int i = 0;
-		while(i < str2.length){
-			//Iterates through the current ingredient values
-			for(int j = 0; j < 5 && i<str2.length; j++, i++){
-			//currIngredient is assigned to one of the ingredient object values
-			System.out.println(str2[i].split(":")[1]);
-			currIngredient.add(j, str2[i].split(":")[1]); //Keys and values are split
-			}
-			//Creates a new RecipeIngredient with the current ingredients values
-			ri = new RecipeIngredient(currIngredient.get(0), currIngredient.get(1), 
-					currIngredient.get(2), Double.parseDouble(currIngredient.get(3).substring(2,3)), currIngredient.get(4));
-			//Adds the recipe ingredient to the Recipe Ingredients list
-			ingredientList.add(ri);
-		}
-	
-		return ingredientList;
-	}
+//	public static ArrayList<RecipeIngredient> parseRecipeIngredient(String ingredients){
+//		ArrayList<RecipeIngredient> ingredientList = new ArrayList<>();
+//		ArrayList<String> currIngredient = new ArrayList<>();
+//		RecipeIngredient ri;
+//		//Brackets and braces are removed
+//		ingredients = ingredients.substring(17, ingredients.length()-1);
+//		ingredients = ingredients.replaceAll("[\\{\\}]", "");
+//		System.out.println(ingredients);
+//		
+//		//Documents inside each ingredient objects are split
+//		String[] str2 = ingredients.split(",");
+//		
+//		//Iterates through all of the available ingredients
+//		int i = 0;
+//		while(i < str2.length){
+//			//Iterates through the current ingredient values
+//			for(int j = 0; j < 5 && i<str2.length; j++, i++){
+//			//currIngredient is assigned to one of the ingredient object values
+//			System.out.println(str2[i].split(":")[1]);
+//			currIngredient.add(j, str2[i].split(":")[1]); //Keys and values are split
+//			}
+//			//Creates a new RecipeIngredient with the current ingredients values
+//			ri = new RecipeIngredient(currIngredient.get(0), currIngredient.get(1), 
+//					currIngredient.get(2), Double.parseDouble(currIngredient.get(3).substring(2,3)), currIngredient.get(4));
+//			//Adds the recipe ingredient to the Recipe Ingredients list
+//			ingredientList.add(ri);
+//		}
+//	
+//		return ingredientList;
+//	}
 
 	
 	
