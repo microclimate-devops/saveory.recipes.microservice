@@ -116,11 +116,11 @@ public class Recipe {
 	public void setIngredients(List<RecipeIngredient> ingredients) {
 		this.ingredients = ingredients;
 	}
-	public List<String> getTags() {
+	public List<String> getTag() {
 		return tag;
 	}
-	public void setTags(List<String> tags) {
-		this.tag = tags;
+	public void setTag(List<String> tag) {
+		this.tag = tag;
 	}
 	public void addTag(String tag) {
 		this.tag.add(tag);
