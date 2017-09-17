@@ -232,12 +232,12 @@ public class RecipeResource {
     				Recipe.class, String.class);
     		
     		Recipe recipe = coll.findOne(DBQuery.is("name", "CAP"));
-    		DBCursor<Recipe> rCursor = coll.find();
-    		ArrayList<Recipe> list = new ArrayList<>();
-    		while(rCursor.hasNext()){
-    			list.add(rCursor.next());
-    		}
-            	return list.get(0);//r1.getAuthor()).build();//Response.ok(r2.toString()).build();
+//    		DBCursor<Recipe> rCursor = coll.find();
+//    		ArrayList<Recipe> list = new ArrayList<>();
+//    		while(rCursor.hasNext()){
+//    			list.add(rCursor.next());
+//    		}
+            	return recipe;//r1.getAuthor()).build();//Response.ok(r2.toString()).build();
          }
         
         @GET
