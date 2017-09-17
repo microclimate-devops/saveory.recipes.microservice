@@ -219,34 +219,25 @@ public class RecipeResource {
         @GET
         @Path("/test5")
         @Produces(MediaType.APPLICATION_JSON)
-        public Recipe usingPOJO(
+        public ArrayList<Recipe> usingPOJO(
         		@QueryParam("recipeId") String query){
+        	//Get the database we are currently using
         	DB database = mongoClient.getDB(db_name);
+        	
+        	//Get specifically the recipe collection from the DB
     		DBCollection recipeCollection = database.getCollection(collection_name);
     		
+    		//Map the recipe collection with the 
     		JacksonDBCollection<Recipe, String> coll = JacksonDBCollection.wrap(recipeCollection, 
     				Recipe.class, String.class);
     		
-    		
-    		//DBObject colQuery = new DBObject().append("name","CAP");
-    				
-    		
     		Recipe recipe = coll.findOne(DBQuery.is("name", "CAP"));
-    		
-    		//Recipe r1 = RecipeManager.parseRecipe(recipeIterator);
-    		
-//    		BasicDBList list = new BasicDBList();
-//    		while(recipeIterator.hasNext()){
-//    			Document doc = recipeIterator.next();
-//    			for(String curr : doc.keySet())
-//    				doc.get(curr);
-//    			//list.add(doc);
-//    			//Document current = Document.parse((String) doc.get("ingredients"));
-//    			ArrayList<Document> currentIngredients = (ArrayList<Document>) doc.get("ingredients");
-//    			for(Document current : currentIngredients)
-//    				list.add(current);
-//    		}
-            	return recipe;//r1.getAuthor()).build();//Response.ok(r2.toString()).build();
+    		DBCursor<Recipe> rCursor = coll.find();
+    		ArrayList<Recipe> list = new ArrayList<>();
+    		while(rCursor.hasNext()){
+    			list.add(rCursor.next());
+    		}
+            	return list;//r1.getAuthor()).build();//Response.ok(r2.toString()).build();
          }
         
         @GET
