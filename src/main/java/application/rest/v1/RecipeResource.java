@@ -219,7 +219,7 @@ public class RecipeResource {
         @GET
         @Path("/test5")
         @Produces(MediaType.TEXT_PLAIN)
-        public ArrayList<Recipe> usingPOJO(
+        public List<Recipe> usingPOJO(
         		@QueryParam("recipeId") String query){
         	//Get the database we are currently using
         	DB database = mongoClient.getDB(db_name);
@@ -233,11 +233,13 @@ public class RecipeResource {
     		
     		Recipe recipe = coll.findOne(DBQuery.is("name", "CAP"));
     		DBCursor<Recipe> rCursor = coll.find();
-    		ArrayList<Recipe> list = new ArrayList<>();
+    		List<Recipe> list = new ArrayList<>();
     		while(rCursor.hasNext()){
-    			Recipe current = rCursor.next();
-    			list.add(current);
+    			list.add(rCursor.next());
     		}
+//    			Recipe current = rCursor.next();
+//    			list.add(current);
+//    		}
             	return list;//r1.getAuthor()).build();//Response.ok(r2.toString()).build();
          }
         
