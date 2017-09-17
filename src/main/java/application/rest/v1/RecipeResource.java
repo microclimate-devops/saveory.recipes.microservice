@@ -235,7 +235,8 @@ public class RecipeResource {
     		DBCursor<Recipe> rCursor = coll.find();
     		ArrayList<Recipe> list = new ArrayList<>();
     		while(rCursor.hasNext()){
-    			list.add(rCursor.next());
+    			Recipe current = rCursor.next();
+    			list.add(current);
     		}
             	return list;//r1.getAuthor()).build();//Response.ok(r2.toString()).build();
          }
