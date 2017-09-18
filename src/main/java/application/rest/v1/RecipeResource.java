@@ -221,7 +221,7 @@ public class RecipeResource {
         @GET
         @Path("/test5")
         @Produces(MediaType.APPLICATION_JSON)
-        public Recipe usingPOJO(
+        public String usingPOJO(
         		@QueryParam("recipeId") String query){
         	//Get the database we are currently using
         	DB database = mongoClient.getDB(db_name);
@@ -242,7 +242,7 @@ public class RecipeResource {
 //    			rCursor.next();
     			list.add(rCursor.next());
     		}
-            	return recipe;//list.get(0);//r1.getAuthor()).build();//Response.ok(r2.toString()).build();
+            	return JSON.serialize(list);//list.get(0);//r1.getAuthor()).build();//Response.ok(r2.toString()).build();
          }
         
         @GET
