@@ -7,6 +7,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mongodb.BasicDBList;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
@@ -71,16 +73,19 @@ public class RecipeIngredient {
         }
 		}
 	}*/
-	
+	@JsonProperty("name")
 	public String getName() {
 		return name;
 	}
+	@JsonProperty("name")
 	public void setName(String name) {
 		this.name = name;
 	}
+	@JsonProperty("tag")
 	public List<String> getTag() {
 		return tag;
 	}
+	@JsonProperty("tag")
 	public void setTag(List<String> tag) {
 		this.tag = tag;
 	}
@@ -91,21 +96,27 @@ public class RecipeIngredient {
 	public void setId(String id) {
 		this.id = id;
 	}*/
+	@JsonProperty("description")
 	public String getDescription() {
 		return description;
 	}
+	@JsonProperty("description")
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	@JsonProperty("quantity")
 	public String getQuantity() {
 		return quantity;
 	}
+	@JsonProperty("quantity")
 	public void setQuantity(String quantity) {
 		this.quantity = quantity;
 	}
+	@JsonProperty("unit")
 	public String getUnit() {
 		return unit;
 	}
+	@JsonProperty("unit")
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}

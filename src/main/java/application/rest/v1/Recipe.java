@@ -72,16 +72,19 @@ public class Recipe {
 	}*/
 	
 	//public static Recipe toRecipe(Mongo)
-	
+	@JsonProperty("name")
 	public String getName() {
 		return name;
 	}
+	@JsonProperty("name")
 	public void setName(String name) {
 		this.name = name;
 	}
+	@JsonProperty("id")
 	public String getId() {
 		return id;
 	}
+	@JsonProperty("id")
 	public void setId(String id) {
 		this.id = id;
 	}
@@ -93,40 +96,50 @@ public class Recipe {
 	public void set_Id(String _id) {
 		this._id = _id;
 	}
+	@JsonProperty("author")
 	public String getAuthor() {
 		return author;
 	}
+	@JsonProperty("author")
 	public void setAuthor(String author) {
 		this.author = author;
 	}
+	@JsonProperty("description")
 	public String getDescription() {
 		return description;
 	}
+	@JsonProperty("description")
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	@JsonProperty("instructions")
 	public String getInstructions() {
 		return instructions;
 	}
+	@JsonProperty("instructions")
 	public void setInstructions(String instructions) {
 		this.instructions = instructions;
 	}
+	@JsonProperty("ingredients")
 	public List<RecipeIngredient> getIngredients() {
 		return ingredients;
 	}
+	@JsonProperty("ingredients")
 	public void setIngredients(List<RecipeIngredient> ingredients) {
 		this.ingredients = ingredients;
 	}
+	@JsonProperty("tag")
 	public List<String> getTag() {
 		return tag;
 	}
+	@JsonProperty("tag")
 	public void setTag(List<String> tag) {
 		this.tag = tag;
 	}
+	
 	public void addTag(String tag) {
 		this.tag.add(tag);
 	}
-	
 	public void addIngredient(RecipeIngredient ingredient){
 		ingredients.add(ingredient);
 	}
