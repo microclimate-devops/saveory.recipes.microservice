@@ -220,8 +220,8 @@ public class RecipeResource {
         
         @GET
         @Path("/test5")
-        @Produces(MediaType.TEXT_PLAIN)
-        public Recipe[] usingPOJO(
+        @Produces(MediaType.APPLICATION_JSON)
+        public Response usingPOJO(
         		@QueryParam("recipeId") String query){
         	//Get the database we are currently using
         	DB database = mongoClient.getDB(db_name);
@@ -230,20 +230,19 @@ public class RecipeResource {
     		DBCollection recipeCollection = database.getCollection(collection_name);
     		
     		//Map the recipe collection with the 
-    		JacksonDBCollection<Recipe, ArrayList> coll = JacksonDBCollection.wrap(recipeCollection, 
-    				Recipe.class, ArrayList.class);
+    		JacksonDBCollection<Recipe, String> coll = JacksonDBCollection.wrap(recipeCollection, 
+    				Recipe.class, String.class);
     		
     		Recipe recipe = coll.findOne(DBQuery.is("name", "CAP"));
     		Iterator<Recipe> rCursor = coll.find().iterator();
-    		Recipe[] list = new Recipe[(int) recipeCollection.count()];
-    		int index = 0;
+    		List<Recipe> list = new ArrayList<>();
     		while(rCursor.hasNext()){
-    			RecipeManager.addToArray(list, rCursor.next(), index++);
+    			list.add(rCursor.next());
     		}
 //    			Recipe current = rCursor.next();
 //    			list.add(current);
 //    		}
-            	return list;//r1.getAuthor()).build();//Response.ok(r2.toString()).build();
+            	return Response.ok(JSON.serialize(list)).build();//r1.getAuthor()).build();//Response.ok(r2.toString()).build();
          }
         
         @GET
