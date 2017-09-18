@@ -55,6 +55,7 @@ public class Recipe {
 		tag = null;
 		description = "";
 		instructions = "";
+		ingredients = null;
 	}
 	
 	//Need to verify the object types
