@@ -10,6 +10,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpClient;
 import org.apache.http.entity.ContentType;
@@ -232,12 +234,12 @@ public class RecipeResource {
     				Recipe.class, String.class);
     		
     		Recipe recipe = coll.findOne(DBQuery.is("name", "CAP"));
-    		DBCursor<Recipe> rCursor = coll.find();
+    		Iterator<Recipe> rIterator = coll.find().iterator();
     		//List<Recipe> list = new ArrayList<>();
-    		while(rCursor.hasNext()){
-    			rCursor.next();
-    			//list.add(rCursor.next());
-    		}
+//    		while(rCursor.hasNext()){
+//    			rCursor.next();
+//    			//list.add(rCursor.next());
+//    		}
             	return recipe;//r1.getAuthor()).build();//Response.ok(r2.toString()).build();
          }
         
