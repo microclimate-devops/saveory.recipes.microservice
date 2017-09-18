@@ -234,13 +234,14 @@ public class RecipeResource {
     				Recipe.class, RecipeIngredient.class);
     		
     		Recipe recipe = coll.findOne(DBQuery.is("name", "CAP"));
-    		List<Recipe> list = new ArrayList<>();
+    		//List<Recipe> list = new ArrayList<>();
     		DBCursor<Recipe> rCursor = coll.find();
+    		BasicDBList list = new BasicDBList();
 //    		List<Recipe> list = new ArrayList<>();
-//    		while(rCursor.hasNext()){
+    		while(rCursor.hasNext()){
 //    			rCursor.next();
-//    			list.add(rCursor.next());
-//    		}
+    			list.add(rCursor.next());
+    		}
             	return recipe;//list.get(0);//r1.getAuthor()).build();//Response.ok(r2.toString()).build();
          }
         
