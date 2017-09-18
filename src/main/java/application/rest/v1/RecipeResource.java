@@ -235,11 +235,11 @@ public class RecipeResource {
     		
     		Recipe recipe = coll.findOne(DBQuery.is("name", "CAP"));
     		Iterator<Recipe> rIterator = coll.find().iterator();
-    		//List<Recipe> list = new ArrayList<>();
-//    		while(rCursor.hasNext()){
-//    			rCursor.next();
+//    		List<Recipe> list = new ArrayList<>();
+    		while(rIterator.hasNext()){
+    			rIterator.next();
 //    			//list.add(rCursor.next());
-//    		}
+    		}
             	return recipe;//r1.getAuthor()).build();//Response.ok(r2.toString()).build();
          }
         
