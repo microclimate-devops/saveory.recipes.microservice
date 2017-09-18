@@ -230,8 +230,8 @@ public class RecipeResource {
     		DBCollection recipeCollection = database.getCollection(collection_name);
     		
     		//Map the recipe collection with the 
-    		JacksonDBCollection<Recipe, String> coll = JacksonDBCollection.wrap(recipeCollection, 
-    				Recipe.class, String.class);
+    		JacksonDBCollection<Recipe, RecipeIngredient> coll = JacksonDBCollection.wrap(recipeCollection, 
+    				Recipe.class, RecipeIngredient.class);
     		
     		Recipe recipe = coll.findOne(DBQuery.is("name", "CAP"));
     		List<Recipe> list = new ArrayList<>();
