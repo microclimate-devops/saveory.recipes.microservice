@@ -220,7 +220,7 @@ public class RecipeResource {
         
         @GET
         @Path("/test5")
-        @Produces(MediaType.APPLICATION_JSON)
+        @Produces(MediaType.TEXT_PLAIN)
         public String usingPOJO(
         		@QueryParam("recipeId") String query){
         	//Get the database we are currently using
@@ -230,19 +230,19 @@ public class RecipeResource {
     		DBCollection recipeCollection = database.getCollection(collection_name);
     		
     		//Map the recipe collection with the 
-    		JacksonDBCollection<Recipe, RecipeIngredient> coll = JacksonDBCollection.wrap(recipeCollection, 
-    				Recipe.class, RecipeIngredient.class);
+    		JacksonDBCollection<Recipe, String> coll = JacksonDBCollection.wrap(recipeCollection, 
+    				Recipe.class, String.class);
     		
     		Recipe recipe = coll.findOne(DBQuery.is("name", "CAP"));
     		//List<Recipe> list = new ArrayList<>();
-    		DBCursor<Recipe> rCursor = (DBCursor<Recipe>) coll.find().iterator();
-    		BasicDBList list = new BasicDBList();
-//    		List<Recipe> list = new ArrayList<>();
+    		DBCursor<Recipe> rCursor = coll.find();
+    		//BasicDBList list = new BasicDBList();
+    		List<Recipe> list = new ArrayList<>();
     		while(rCursor.hasNext()){
 //    			rCursor.next();
     			list.add(rCursor.next());
     		}
-            	return JSON.serialize(list);//list.get(0);//r1.getAuthor()).build();//Response.ok(r2.toString()).build();
+            	return list.get(0).getName();//list.get(0);//r1.getAuthor()).build();//Response.ok(r2.toString()).build();
          }
         
         @GET
