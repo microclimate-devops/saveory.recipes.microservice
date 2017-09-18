@@ -237,7 +237,7 @@ public class RecipeResource {
     		//List<Recipe> list = new ArrayList<>();
     		DBCursor<Recipe> rCursor = coll.find();
     		//BasicDBList list = new BasicDBList();
-    		List<Recipe> list = new ArrayList<>();
+    		ArrayList<Recipe> list = new ArrayList<>();
     		while(rCursor.hasNext()){
 //    			rCursor.next();
     			list.add(rCursor.next());
