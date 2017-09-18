@@ -235,7 +235,7 @@ public class RecipeResource {
     		
     		Recipe recipe = coll.findOne(DBQuery.is("name", "CAP"));
     		List<Recipe> list = new ArrayList<>();
-    		//DBCursor<Recipe> rCursor = coll.find();
+    		DBCursor<Recipe> rCursor = coll.find();
 //    		List<Recipe> list = new ArrayList<>();
 //    		while(rCursor.hasNext()){
 //    			rCursor.next();
