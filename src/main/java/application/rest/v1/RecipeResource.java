@@ -10,8 +10,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.util.ArrayList;
-import java.util.Iterator;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpClient;
 import org.apache.http.entity.ContentType;
@@ -221,7 +219,7 @@ public class RecipeResource {
         @GET
         @Path("/test5")
         @Produces(MediaType.APPLICATION_JSON)
-        public Response usingPOJO(
+        public Recipe usingPOJO(
         		@QueryParam("recipeId") String query){
         	//Get the database we are currently using
         	DB database = mongoClient.getDB(db_name);
@@ -234,15 +232,12 @@ public class RecipeResource {
     				Recipe.class, String.class);
     		
     		Recipe recipe = coll.findOne(DBQuery.is("name", "CAP"));
-    		Iterator<Recipe> rCursor = coll.find().iterator();
-    		List<Recipe> list = new ArrayList<>();
-    		while(rCursor.hasNext()){
-    			list.add(rCursor.next());
-    		}
-//    			Recipe current = rCursor.next();
-//    			list.add(current);
+    		DBCursor<Recipe> rCursor = coll.find();
+//    		List<Recipe> list = new ArrayList<>();
+//    		while(rCursor.hasNext()){
+//    			list.add(rCursor.next());
 //    		}
-            	return Response.ok(JSON.serialize(list)).build();//r1.getAuthor()).build();//Response.ok(r2.toString()).build();
+            	return recipe;//r1.getAuthor()).build();//Response.ok(r2.toString()).build();
          }
         
         @GET
