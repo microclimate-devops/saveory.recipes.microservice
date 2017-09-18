@@ -152,6 +152,11 @@ public class RecipeManager {
 //		return recipe; 
 //	}
 //	
+	
+	public static void addToArray(Recipe[] list, Recipe recipe, int index){
+		list[index] = recipe;
+	}
+	
 	public static ArrayList<String> parseTags(String tags){
 		//Empty object to be returned
 		ArrayList<String> tagsList = new ArrayList<>();
