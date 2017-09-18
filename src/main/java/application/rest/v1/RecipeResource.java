@@ -237,11 +237,11 @@ public class RecipeResource {
     		List<Recipe> list = new ArrayList<>();
     		DBCursor<Recipe> rCursor = coll.find();
 //    		List<Recipe> list = new ArrayList<>();
-    		while(rCursor.hasNext()){
+//    		while(rCursor.hasNext()){
 //    			rCursor.next();
-    			list.add(rCursor.next());
-    		}
-            	return list.get(0);//r1.getAuthor()).build();//Response.ok(r2.toString()).build();
+//    			list.add(rCursor.next());
+//    		}
+            	return recipe;//list.get(0);//r1.getAuthor()).build();//Response.ok(r2.toString()).build();
          }
         
         @GET
