@@ -63,35 +63,33 @@ public class RecipeResource {
         
 
         @GET
-         @Produces(MediaType.APPLICATION_JSON)
-         public String getRecipes(
-        			//@QueryParam("username") String username
-        			){
-        		MongoDatabase database = mongoClient.getDatabase(db_name);
-        		MongoCollection<Document> recipeCollection = database.getCollection(collection_name);
-        		MongoCollection<Document> userCollection = database.getCollection(auxCollection);
+        @Produces(MediaType.APPLICATION_JSON)
+        public String getRecipes(){
+        	MongoDatabase database = mongoClient.getDatabase(db_name);
+        	MongoCollection<Document> recipeCollection = database.getCollection(collection_name);
+        	MongoCollection<Document> userCollection = database.getCollection(auxCollection);
         		
-        		//JSONArray recipe = rCollection.getJsonObject("ingredients":[])
+        	//Iterator used to go through recipe collection JSONs 
+        	MongoCursor<Document> recipeIterator = recipeCollection.find().iterator();
+        	
+        	//Pantry service request to get current user's pantry (hard coded currently and just for tracing)
+        	String pantry = RecipeManager.getUserPantry("59bae6bc46e0fb00012e87b5");
+        	
+        	//List to add all of the recipes
+        	BasicDBList list = new BasicDBList();
         		
-        		MongoCursor<Document> recipeIterator = recipeCollection.find().iterator();
-        		MongoCursor<Document> userIterator = userCollection.find().iterator();
+        	//Iteration continues while the iterator still has documents
+        	while(recipeIterator.hasNext()){
         		
-        		BasicDBList list = new BasicDBList();
-        		while(recipeIterator.hasNext()){
-        			Document doc = recipeIterator.next();
-        			list.add(doc);
-        		}
-        		return JSON.serialize(list);
+        		//Document doc = recipeIterator.next();
+        		//Current document is added into the list
+        		list.add(recipeIterator.next());
+        	}
         		
-                /*Ingredient i1 = new Ingredient("Milk", "fdsfs12e1", "3 Monjitas", 1, true, "03/11/18", null);
-                Ingredient i2 = new Ingredient("Cereal", "fopsdf3", "Kellog's", 1, true, "06/10/18", null);
-                Recipe r = new Recipe("Cereal and Milk", "kmnkkn3l", "The simplest breakfast you'll ever make",
-                                "Step 1: Pour cereal in bowl; Step 2: Pour milk in bowl", null);
-                r.addIngredient(i1);
-                r.addIngredient(i2);
-                return r;*/
+        	//After all documents are added into the list then it is serialized into a string
+        	return JSON.serialize(list);
         }
-
+        
         @GET
         @Path("/test")
         @Produces(MediaType.APPLICATION_JSON)
