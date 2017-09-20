@@ -65,9 +65,9 @@ public class RecipeResource {
         @GET
         @Produces(MediaType.APPLICATION_JSON)
         public String getRecipes(){
+        	//Retrievement of the mongo database and recipe collection
         	MongoDatabase database = mongoClient.getDatabase(db_name);
         	MongoCollection<Document> recipeCollection = database.getCollection(collection_name);
-        	MongoCollection<Document> userCollection = database.getCollection(auxCollection);
         		
         	//Iterator used to go through recipe collection JSONs 
         	MongoCursor<Document> recipeIterator = recipeCollection.find().iterator();
@@ -81,7 +81,6 @@ public class RecipeResource {
         	//Iteration continues while the iterator still has documents
         	while(recipeIterator.hasNext()){
         		
-        		//Document doc = recipeIterator.next();
         		//Current document is added into the list
         		list.add(recipeIterator.next());
         	}
