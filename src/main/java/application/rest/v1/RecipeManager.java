@@ -60,16 +60,21 @@ public class RecipeManager {
             if(entity != null){
                     showPantryResponse = EntityUtils.toString(entity);
             }
+            //Edit response to failure and no response
             else{
-            	showPantryResponse = "{\"status\":\"failure, no response entity from backend "
+            	showPantryResponse = "{\"Status\":\"Failure, no response entity from backend "
             						+ "when retrieving the user's pantry\"}";
             }
         }
+		//Catch possible exception
         catch (Exception e) {
-        	showPantryResponse = "{\"status\":\"failed while executing GET request to the backend "
+        	showPantryResponse = "{\"Status\":\"Failed while executing GET request to the pantry backend service"
                 					+ "for a recipe\", \"error\":\""+e.getMessage()+"\"}";
         }
+		
 		return showPantryResponse;
+	//Old Implementation (w. Suzzie's Pantry Code)
+//		return showPantryResponse;
 //		String user = RecipeManager.getUser(username);
 //		if(user.contains("failure") || user.contains("failed") || user.equals(""))
 //			return user;
@@ -84,32 +89,32 @@ public class RecipeManager {
 //    	return pantryArray.toString();
 	
 	}
-	
-	public static String getUser(String username){
-		String showUserResponse;
-		HttpGet getUser = new HttpGet("http://pantry-service:9080/Pantry/pantry/" + username);
-
-        try{
-            //Execute request
-            HttpResponse getUserResponse = httpclient.execute(getUser);
-            HttpEntity entity = getUserResponse.getEntity();
-
-            //Check if the response entity is there
-            if(entity != null){
-                    showUserResponse = EntityUtils.toString(entity);
-            }
-            else{
-            	showUserResponse = "{\"status\":\"failure, no response entity from backend "
-            						+ "when retrieving the user's pantry\"}";
-            }
-        }
-        catch (Exception e) {
-        	showUserResponse = "{\"status\":\"failed while executing GET request to the backend "
-                					+ "for a recipe\", \"error\":\""+e.getMessage()+"\"}";
-        }
-        
-        return showUserResponse;
-	}
+	//Not necesary anymore (for now)
+//	public static String getUser(String username){
+//		String showUserResponse;
+//		HttpGet getUser = new HttpGet("http://pantry-service:9080/Pantry/pantry/" + username);
+//
+//        try{
+//            //Execute request
+//            HttpResponse getUserResponse = httpclient.execute(getUser);
+//            HttpEntity entity = getUserResponse.getEntity();
+//
+//            //Check if the response entity is there
+//            if(entity != null){
+//                    showUserResponse = EntityUtils.toString(entity);
+//            }
+//            else{
+//            	showUserResponse = "{\"status\":\"failure, no response entity from backend "
+//            						+ "when retrieving the user's pantry\"}";
+//            }
+//        }
+//        catch (Exception e) {
+//        	showUserResponse = "{\"status\":\"failed while executing GET request to the backend "
+//                					+ "for a recipe\", \"error\":\""+e.getMessage()+"\"}";
+//        }
+//        
+//        return showUserResponse;
+//	}
 	
 	public static String getRecipes(){
 		MongoDatabase database = mongoClient.getDatabase(db_name);
