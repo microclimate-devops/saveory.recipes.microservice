@@ -66,7 +66,7 @@ public class RecipeManager {
 	
 	public static String getUser(String username){
 		String showUserResponse;
-		HttpGet getUser = new HttpGet("http://pantry-service:9080/Pantry/pantry?user=" + username);
+		HttpGet getUser = new HttpGet("http://pantry-service:9080/Pantry/pantry/" + username);
 
         try{
             //Execute request
