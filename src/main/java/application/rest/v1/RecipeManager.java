@@ -49,18 +49,39 @@ public class RecipeManager {
 	
 	
 	public static String getUserPantry(String username){
-		String user = RecipeManager.getUser(username);
-		if(user.contains("failure") || user.contains("failed") || user.equals(""))
-			return user;
-		
-		//Changes received JSON from array to object
-		user = user.substring(1, user.length() - 1); 
-    	
-    	//Read in the requested pantry as a JSON
-    	JSONObject userJSON = new JSONObject(user);
-    	JSONArray pantryArray = userJSON.getJSONArray("pantry");
-        
-    	return pantryArray.toString();
+		String showPantryResponse = "";
+		HttpGet getPantry = new HttpGet("http://pantry-service:9080/Pantry/pantry/" + username);
+		try{
+            //Execute request
+            HttpResponse getPantryResponse = httpclient.execute(getPantry);
+            HttpEntity entity = getPantryResponse.getEntity();
+
+            //Check if the response entity is there
+            if(entity != null){
+                    showPantryResponse = EntityUtils.toString(entity);
+            }
+            else{
+            	showPantryResponse = "{\"status\":\"failure, no response entity from backend "
+            						+ "when retrieving the user's pantry\"}";
+            }
+        }
+        catch (Exception e) {
+        	showPantryResponse = "{\"status\":\"failed while executing GET request to the backend "
+                					+ "for a recipe\", \"error\":\""+e.getMessage()+"\"}";
+        }
+		return showPantryResponse;
+//		String user = RecipeManager.getUser(username);
+//		if(user.contains("failure") || user.contains("failed") || user.equals(""))
+//			return user;
+//		
+//		//Changes received JSON from array to object
+//		user = user.substring(1, user.length() - 1); 
+//    	
+//    	//Read in the requested pantry as a JSON
+//    	JSONObject userJSON = new JSONObject(user);
+//    	JSONArray pantryArray = userJSON.getJSONArray("pantry");
+//        
+//    	return pantryArray.toString();
 	
 	}
 	
