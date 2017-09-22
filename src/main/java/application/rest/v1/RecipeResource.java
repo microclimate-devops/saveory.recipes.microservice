@@ -44,9 +44,13 @@ import com.mongodb.util.JSON;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import java.util.Map;
+import java.io.IOException;
 import java.io.StringReader;
+
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper; 
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.mongojack.*;
 import com.mongodb.DBCollection;
@@ -134,7 +138,9 @@ public class RecipeResource {
         	
         	//Gets the user's pantry ingredients using the username in the query
         	String pantry = RecipeManager.getUserPantry(username);
-        	
+//        	JSONObject userPantry = (JSONObject) JSON.parse(pantry);
+//        	ObjectMapper pantryMapper = new ObjectMapper();
+//        	pantryMapper.readValue(userPantry, Pantry);
         	//Get 1 recipe to compare its ingredients with the user's **TODO**
         	
         	
@@ -233,14 +239,47 @@ public class RecipeResource {
     		Recipe recipe = coll.findOne(DBQuery.is("name", "CAP"));
     		//List<Recipe> list = new ArrayList<>();
     		DBCursor<Recipe> rCursor = coll.find();
+    		Document doc;
     		//BasicDBList list = new BasicDBList();
     		ArrayList<Recipe> list = new ArrayList<>();
     		while(rCursor.hasNext()){
-//    			rCursor.next();
+//    			doc = rCursor.next();
     			list.add(rCursor.next());
     		}
             	return list.get(0).getName();//list.get(0);//r1.getAuthor()).build();//Response.ok(r2.toString()).build();
          }
+        @GET
+        @Path("/test6")
+        @Produces(MediaType.APPLICATION_JSON)
+        public List<Recipe> getRecipes2() throws JsonParseException, JsonMappingException, IOException{
+        	//Retrievement of the mongo database and recipe collection
+        	MongoDatabase database = mongoClient.getDatabase(db_name);
+        	MongoCollection<Document> recipeCollection = database.getCollection(collection_name);
+        		
+        	//Iterator used to go through recipe collection JSONs 
+        	MongoCursor<Document> recipeIterator = recipeCollection.find().iterator();
+        	
+        	//Object Mapper for Recipes
+        	ObjectMapper recipeMapper = new ObjectMapper();
+        	
+        	//Pantry service request to get current user's pantry (hard coded currently and just for tracing)
+        	//String pantry = RecipeManager.getUserPantry("59bae6bc46e0fb00012e87b5");
+        	
+        	//List to add all of the recipes
+        	BasicDBList list = new BasicDBList();
+        		
+        	//Iteration continues while the iterator still has documents
+        	while(recipeIterator.hasNext()){
+        		
+        		//Current document is added into the list
+        		list.add(recipeIterator.next());
+        	}
+        		
+        	List<Recipe> recipeList = recipeMapper.readValue(JSON.serialize(list), new TypeReference<List<Recipe>>(){});
+        	
+        	return recipeList;
+        }
+        
         
         @GET
          @Path("/{recipeId}")
