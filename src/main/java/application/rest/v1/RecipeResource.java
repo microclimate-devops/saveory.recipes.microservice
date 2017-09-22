@@ -267,15 +267,16 @@ public class RecipeResource {
         	
         	//List to add all of the recipes
         	BasicDBList list = new BasicDBList();
-        		
+        	String recipeJSON = "";
         	//Iteration continues while the iterator still has documents
         	while(recipeIterator.hasNext()){
         		
+        		recipeJSON = recipeJSON.concat(recipeIterator.next().toJson());
         		//Current document is added into the list
-        		list.add(recipeIterator.next());
+        		//list.add(recipeIterator.next());
         	}
         		
-        	ArrayList<Recipe> recipeList = recipeMapper.readValue(JSON.serialize(list.toString()), new TypeReference<List<Recipe>>(){});
+        	List<Recipe> recipeList = recipeMapper.readValue(JSON.serialize(recipeJSON), new TypeReference<List<Recipe>>(){});
         	
         	return recipeList.get(1);
         }
