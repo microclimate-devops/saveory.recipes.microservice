@@ -280,7 +280,7 @@ public class RecipeResource {
         		if(currentDoc.containsKey("ingredients")){
         			
         			//We convert its value into a JSONArray
-        			currentIngredients = new JSONArray((String) currentDoc.get("ingredients"));
+        			currentIngredients = new JSONArray(currentDoc.get("ingredients"));
         			
         			//We iterate through its JSONObjects
         			for(int i = 0; i < currentIngredients.length(); i++){
