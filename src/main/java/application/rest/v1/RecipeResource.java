@@ -250,8 +250,8 @@ public class RecipeResource {
          }
         @GET
         @Path("/test6")
-        @Produces(MediaType.APPLICATION_JSON)
-        public List<Recipe> getRecipes2() throws JsonParseException, JsonMappingException, IOException{
+        @Produces(MediaType.TEXT_PLAIN)
+        public String getRecipes2() throws JsonParseException, JsonMappingException, IOException{
         	//Retrievement of the mongo database and recipe collection
         	MongoDatabase database = mongoClient.getDatabase(db_name);
         	MongoCollection<Document> recipeCollection = database.getCollection(collection_name);
@@ -267,20 +267,49 @@ public class RecipeResource {
         	
         	//List to add all of the recipes
         	BasicDBList list = new BasicDBList();
-        	String recipeJSON = "";
+        	
+        	JSONArray currentIngredients;
+        	JSONObject ingredient;
+        	
         	//Iteration continues while the iterator still has documents
         	while(recipeIterator.hasNext()){
+        		//Holds next document of the current recipe JSONObject
+        		Document currentDoc = recipeIterator.next();
         		
+        		//We verify that it is the ingredients document
+        		if(currentDoc.containsKey("ingredients")){
+        			
+        			//We convert its value into a JSONArray
+        			currentIngredients = new JSONArray(currentDoc.toJson());
+        			
+        			//We iterate through its JSONObjects
+        			for(int i = 0; i < currentIngredients.length(); i++){
+        				
+        				//We hold the current ingredient in a variable
+        				ingredient = (JSONObject) currentIngredients.get(i);
+        				
+        				//Store its name and verify if it is milk
+        				String name = (String) ingredient.get("name");
+        				if(name.equalsIgnoreCase("Milk")){
+        					
+        					//We append a document into that object (to alert if the user has it or not)
+        					ingredient.append("coco", "loco");
+        				}
+        			}
+        		}
+        		
+        		//String version of adding documents
         		//recipeJSON = recipeJSON.concat(recipeIterator.next().toJson());
+        		
         		//Current document is added into the list
-        		list.add(recipeIterator.next());
+        		list.add(currentDoc);
         	}
         		
-        	List<Recipe> recipeList = recipeMapper.readValue(JSON.serialize(
-        			list.toString().substring(0,list.toString().length()-1))
-        			, new TypeReference<List<Recipe>>(){});
+//        	List<Recipe> recipeList = recipeMapper.readValue(JSON.serialize(
+//        			list.toString().substring(0,list.toString().length()-1))
+//        			, new TypeReference<List<Recipe>>(){});
         	
-        	return recipeList;//recipeList.get(1);
+        	return list.toString();//recipeList.get(1);
         }
         
         
