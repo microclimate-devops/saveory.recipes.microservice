@@ -251,7 +251,7 @@ public class RecipeResource {
         @GET
         @Path("/test6")
         @Produces(MediaType.APPLICATION_JSON)
-        public Recipe getRecipes2() throws JsonParseException, JsonMappingException, IOException{
+        public String getRecipes2() throws JsonParseException, JsonMappingException, IOException{
         	//Retrievement of the mongo database and recipe collection
         	MongoDatabase database = mongoClient.getDatabase(db_name);
         	MongoCollection<Document> recipeCollection = database.getCollection(collection_name);
@@ -271,14 +271,14 @@ public class RecipeResource {
         	//Iteration continues while the iterator still has documents
         	while(recipeIterator.hasNext()){
         		
-        		recipeJSON = recipeJSON.concat(recipeIterator.next().toString());
+        		recipeJSON = recipeJSON.concat(recipeIterator.next().toJson());
         		//Current document is added into the list
         		//list.add(recipeIterator.next());
         	}
         		
         	List<Recipe> recipeList = recipeMapper.readValue(JSON.serialize(recipeJSON), new TypeReference<List<Recipe>>(){});
         	
-        	return recipeList.get(1);
+        	return recipeJSON;//recipeList.get(1);
         }
         
         
