@@ -271,7 +271,7 @@ public class RecipeResource {
         	//Iteration continues while the iterator still has documents
         	while(recipeIterator.hasNext()){
         		
-        		recipeJSON = recipeJSON.concat(recipeIterator.next().toJson());
+        		recipeJSON = recipeJSON.concat(recipeIterator.next().toString());
         		//Current document is added into the list
         		//list.add(recipeIterator.next());
         	}
