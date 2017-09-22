@@ -269,11 +269,11 @@ public class RecipeResource {
         	BasicDBList list = new BasicDBList();
         		
         	//Iteration continues while the iterator still has documents
-        	while(recipeIterator.hasNext()){
-        		
+        	do {
         		//Current document is added into the list
         		list.add(recipeIterator.next());
-        	}
+        		
+        	}while(recipeIterator.hasNext());
         		
         	ArrayList<Recipe> recipeList = recipeMapper.readValue(JSON.serialize(list), new TypeReference<List<Recipe>>(){});
         	
