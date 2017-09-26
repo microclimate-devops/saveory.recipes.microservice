@@ -277,27 +277,25 @@ public class RecipeResource {
         		//Holds next document of the current recipe JSONObject
         		Document currentDoc = recipeIterator.next();
         		
-        		//We verify that it is the ingredients document
-        		//if(currentDoc.containsKey("\"ingredients\"")){
-        			
-        			//We convert its value into a JSONArray
-        			currentIngredients = new JSONArray((ArrayList<String>)currentDoc.get("\"ingredients\""));
-        			
-        			//We iterate through its JSONObjects
-        			for(int i = 0; i < currentIngredients.length(); i++){
+    			//We convert its value into a JSONArray
+    			currentIngredients =  (JSONArray) currentDoc.get("\"ingredients\"");
+    			
+    			//We iterate through its JSONObjects
+    			for(int i = 0; i < currentIngredients.length(); i++){
         				
-        				//We hold the current ingredient in a variable
-        				ingredient = (JSONObject) currentIngredients.get(i);
-        				//Store its name and verify if it is milk
+    				//We hold the current ingredient in a variable
+    				ingredient = (JSONObject) currentIngredients.get(i);
+    				
+    				//Store its name and verify if it is milk
 //        				String name = (String) ingredient.get("name");
 //        				if(name.equalsIgnoreCase("Milk")){
-        					
-        				//We append a document into that object (to alert if the user has it or not)
-        				ingredient.append("coco", "loco");
-//        				}
-        			}
-        		//}	
-        			currentDoc.put("coco", "loco");
+    					
+    				//We append a document into that object (to alert if the user has it or not)
+    				ingredient.append("coco", "loco");
+//        				
+        		}
+        			//}	
+        			//currentDoc.put("coco", "loco");
         		//String version of adding documents
         		//recipeJSON = recipeJSON.concat(recipeIterator.next().toJson());
         		
