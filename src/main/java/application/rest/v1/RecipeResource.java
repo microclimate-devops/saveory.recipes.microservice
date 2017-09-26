@@ -286,8 +286,8 @@ public class RecipeResource {
     				//We hold the current ingredient in a variable
     				
     				ingredient = currentIngredients.get(i);
-    				if(ingredient.containsKey("Milk"))
-    					ingredient.append("coco", "loco");
+    			
+    				ingredient.append("coco", "loco");
     				currentIngredients.set(i, ingredient);
     				
     				//Store its name and verify if it is milk
@@ -299,7 +299,7 @@ public class RecipeResource {
     				
 //        				
         		}
-    			currentDoc.put("ïngredients", currentIngredients);
+    			currentDoc.replace("ingredients", currentIngredients);
         			//}	
         			//currentDoc.put("coco", "loco");
         		//String version of adding documents
