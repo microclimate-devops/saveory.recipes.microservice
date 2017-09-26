@@ -280,8 +280,8 @@ public class RecipeResource {
         		//Hold current in a JSONObject variable
         		curr = (JSONObject) pantryArray.get(j);
         		
-        		//Store current JSONObject ingredient name in pantryIngredients (verify lowercase later)
-        		pantryIngredients.add(curr.get("ingredient").toString().toLowerCase());
+        		//Store current JSONObject ingredient name in pantryIngredients
+        		pantryIngredients.add(curr.getString("ingredient"));
         	}
         	
         	//List to add all of the recipes
@@ -306,7 +306,7 @@ public class RecipeResource {
     				ingredient = currentIngredients.get(i);
     				
     				//Verifies one specific ingredient (used later to validate pantry ingredients)
-    				if(pantryIngredients.contains(ingredient.getString("name"))){
+    				if(pantryIngredients.contains(ingredient.getString("name").toLowerCase())){
     					
 	    				//Appends a value that validates if the user has enough ingredients
     					ingredient.append("has", "1");
