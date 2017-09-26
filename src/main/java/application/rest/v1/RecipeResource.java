@@ -268,7 +268,7 @@ public class RecipeResource {
         	//List to add all of the recipes
         	BasicDBList list = new BasicDBList();
         	
-        	//
+        	//ArrayList and Document variables for next iterations
         	ArrayList<Document> currentIngredients;
         	Document ingredient;
         	
@@ -277,19 +277,19 @@ public class RecipeResource {
         		//Holds next document of the current recipe JSONObject
         		Document currentDoc = recipeIterator.next();
         		
-    			//We convert its value into a JSONArray
+    			//We convert its value into an ArrayList of Documents
     			currentIngredients =  (ArrayList<Document>) currentDoc.get("ingredients");
     			
     			//We iterate through its JSONObjects
     			for(int i = 0; i < currentIngredients.size(); i++){
         				
     				//We hold the current ingredient in a variable
-    				
     				ingredient = currentIngredients.get(i);
-    			
-    				ingredient.append("coco", "loco");
-    				currentIngredients.set(i, ingredient);
-    				
+    						
+    				if(ingredient.getString("name").equalsIgnoreCase("Milk")){
+	    				ingredient.append("coco", "loco");
+	    				currentIngredients.set(i, ingredient);
+    				}
     				//Store its name and verify if it is milk
 //        				String name = (String) ingredient.get("name");
 //        				if(name.equalsIgnoreCase("Milk")){
