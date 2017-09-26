@@ -67,9 +67,9 @@ public class RecipeResource {
 		MongoClient mongoClient = new MongoClient(new MongoClientURI(db_client_uri));
         
 
-        @GET
+    	@GET
         @Produces(MediaType.APPLICATION_JSON)
-        public String getRecipes(){
+        public Response getRecipes() throws JsonParseException, JsonMappingException, IOException{
         	//Retrievement of the mongo database and recipe collection
         	MongoDatabase database = mongoClient.getDatabase(db_name);
         	MongoCollection<Document> recipeCollection = database.getCollection(collection_name);
@@ -78,160 +78,63 @@ public class RecipeResource {
         	MongoCursor<Document> recipeIterator = recipeCollection.find().iterator();
         	
         	//Pantry service request to get current user's pantry (hard coded currently and just for tracing)
-        	//String pantry = RecipeManager.getUserPantry("59bae6bc46e0fb00012e87b5");
+        	HashMap<String, Double> userIngredients = RecipeManager.getUserIngredients("59bae6bc46e0fb00012e87b5");
         	
         	//List to add all of the recipes
         	BasicDBList list = new BasicDBList();
-        		
+        	
+        	//ArrayList and Document variables for next iterations
+        	ArrayList<Document> currentRecipeIngredients;
+        	Document currentIngredient;
+        	
         	//Iteration continues while the iterator still has documents
         	while(recipeIterator.hasNext()){
+        		//Holds next document of the current recipe JSONObject
+        		Document currentRecipe = recipeIterator.next();
         		
-        		//Current document is added into the list
-        		list.add(recipeIterator.next());
-        	}
+    			//We get the current recipe ingredients convert its value into an ArrayList of Documents
+    			currentRecipeIngredients =  (ArrayList<Document>) currentRecipe.get("ingredients");
+    			
+    			//We iterate through its JSONObjects
+    			for(int i = 0; i < currentRecipeIngredients.size(); i++){
+        				
+    				//We hold the current ingredient in a variable
+    				currentIngredient = currentRecipeIngredients.get(i);
+    				
+    				//We try to obtain the quantity of this ingredient that the user has in the pantry
+    				Double currentQuantity = userIngredients.get(currentIngredient.getString("name").toLowerCase());
+    				
+    				//Verifies if the user has the ingredient
+    				if(currentQuantity != null){
+    					
+    					//If the user has more or equal quantity needed 
+    					if(currentQuantity >= Double.parseDouble(currentIngredient.getString("quantity"))){
+		    				//Appends a value that validates if the user has enough ingredients
+	    					currentIngredient.append("has", "2");
+    					}
+    					else{
+    						//The user has the ingredient but not enough quantity
+    						currentIngredient.append("has", "1");
+    					}
+    				}
+    				else{
+    					//Ingredient is not inside the user's pantry
+    					currentIngredient.append("has", "0");
+    				}
+    				//Modified ingredient Document is set into the current index in the ArrayList
+    				currentRecipeIngredients.set(i, currentIngredient);
+    				
+        		}
+    			//New Modified ArrayList replaces the old ArrayList
+    			currentRecipe.replace("ingredients", currentRecipeIngredients);
         		
-        	//After all documents are added into the list then it is serialized into a string
-        	return JSON.serialize(list);
-        }
-        
-        @GET
-        @Path("/test")
-        @Produces(MediaType.APPLICATION_JSON)
-        public String getRecipeJSON(
-        		@QueryParam("username") String username
-        		){
-        	MongoDatabase database = mongoClient.getDatabase(db_name);
-    		MongoCollection<Document> recipeCollection = database.getCollection(collection_name);
-    		MongoCollection<Document> userCollection = database.getCollection(auxCollection);
-    		
-    		//Document query = new Document().append("name","CAP");
-    		//Document query2 = new Document().append("ingredients",[]);
-    				
-    		//MongoCursor<Document> recipe = rCollection.find(query);
-    		
-    		MongoCursor<Document> recipeIterator = recipeCollection.find().iterator();
-    		//MongoCursor<Document> userIterator = userCollection.find().iterator();
-    		
-    		BasicDBList list = new BasicDBList();
-    		while(recipeIterator.hasNext()){
-    			Document doc = recipeIterator.next();
-    			//list.add(doc);
-    			//Document current = Document.parse((String) doc.get("ingredients"));
-    			ArrayList<Document> currentIngredients = (ArrayList<Document>) doc.get("ingredients");
-    			for(Document current : currentIngredients)
-    				list.add(current);
-    		}
-    		
-    		//QueryParam test case
-    		//if(username != null)
-    			//list.add(new Document().append("username", username));
-    		return JSON.serialize(list);
-    		
-        	
-        }
-        
-        
-        @GET
-        @Path("/test3")
-        @Produces(MediaType.APPLICATION_JSON)
-        public Response getRecipeWMAP(
-        		@QueryParam("recipeId") String query){
-        	Recipe r1;
-        	ObjectMapper mapper = new ObjectMapper();
-        	ObjectWriter printer = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        	try{
-        	r1 = mapper.readValue("{"
-        		+ "\"name\" : \"Cereal and Milk\","
-        				+ "\"id\" : \"1\","
-        				+ "\"author\" : \"Bob Saget\","
-        				+ "\"tag\" : ["
-        				+ "\"dairy\","
-        				+ "\"vegetarian\""
-        				+ "],"
-        				+ "\"description\" : \"The simplest breakfast you'll ever make\","
-        				+ "\"instructions\" : \"Step 1: Pour cereal in bowl; Step 2: Pour milk in bowl\""
-        				+ "\"ingredients\" : ["
-        					+ "{"
-        					+ "\"name\" : \"Cereal\","
-	        				+ "\"tag\" : \"null\","
-	        				+ "\"description\" : \"Kellog's Brand\","
-	        				+ "\"quantity\" : \"1\","
-	        				+ "\"unit\" : \"cup\""
-	        				+ "},"
-	        				+ "{"
-	        				+ "\"name\" : \"Milk\","
-	        				+ "\"tag\" : \"dairy\","
-	        				+ "\"description\" : \"Kellog's Brand\","
-	        				+ "\"quantity\" : \"0.5\","
-	        				+ "\"unit\" : \"cup\""
-	        				+ "}"
-	        				+ "]"
-	        				+ "}", Recipe.class);
+        		//Current modified Recipe is added into the list to return
+        		list.add(currentRecipe);
         	}
-        	catch(Exception e){
-        		return Response.ok(e.getMessage()).build();
-        	}
-        	if (r1 != null)
-        		return Response.ok(r1.getName()).build();
-        	return null;
+        	//Modified Recipe List is returned
+        	return Response.ok(list.toString()).build();
         }
         
-        @GET
-        @Path("/test4")
-        @Produces(MediaType.APPLICATION_JSON)
-        public Response usingParser(
-        		@QueryParam("recipeId") String query){
-        	MongoDatabase database = mongoClient.getDatabase(db_name);
-    		MongoCollection<Document> recipeCollection = database.getCollection(collection_name);
-    		
-    		Document colQuery = new Document().append("name","CAP");
-    				
-    		
-    		MongoCursor<Document> recipeIterator = recipeCollection.find(colQuery).iterator();
-    		
-    		//Recipe r1 = RecipeManager.parseRecipe(recipeIterator);
-    		
-//    		BasicDBList list = new BasicDBList();
-//    		while(recipeIterator.hasNext()){
-//    			Document doc = recipeIterator.next();
-//    			for(String curr : doc.keySet())
-//    				doc.get(curr);
-//    			//list.add(doc);
-//    			//Document current = Document.parse((String) doc.get("ingredients"));
-//    			ArrayList<Document> currentIngredients = (ArrayList<Document>) doc.get("ingredients");
-//    			for(Document current : currentIngredients)
-//    				list.add(current);
-//    		}
-            	return Response.ok("Hello").build();//r1.getAuthor()).build();//Response.ok(r2.toString()).build();
-         }
-        
-        @GET
-        @Path("/test5")
-        @Produces(MediaType.TEXT_PLAIN)
-        public String usingPOJO(
-        		@QueryParam("recipeId") String query){
-        	//Get the database we are currently using
-        	DB database = mongoClient.getDB(db_name);
-        	
-        	//Get specifically the recipe collection from the DB
-    		DBCollection recipeCollection = database.getCollection(collection_name);
-    		
-    		//Map the recipe collection with the 
-    		JacksonDBCollection<Recipe, String> coll = JacksonDBCollection.wrap(recipeCollection, 
-    				Recipe.class, String.class);
-    		
-    		Recipe recipe = coll.findOne(DBQuery.is("name", "CAP"));
-    		//List<Recipe> list = new ArrayList<>();
-    		DBCursor<Recipe> rCursor = coll.find();
-    		Document doc;
-    		//BasicDBList list = new BasicDBList();
-    		ArrayList<Recipe> list = new ArrayList<>();
-    		while(rCursor.hasNext()){
-//    			doc = rCursor.next();
-    			list.add(rCursor.next());
-    		}
-            	return list.get(0).getName();//list.get(0);//r1.getAuthor()).build();//Response.ok(r2.toString()).build();
-         }
         @GET
         @Path("/test6")
         @Produces(MediaType.TEXT_PLAIN)
@@ -361,24 +264,4 @@ public class RecipeResource {
                 return "Nope";
                  */
         }
-
-//       @Produces(MediaType.APPLICATION_JSON)
-//       public Recipe getRecipe(@PathParam("recipeId") int id  ){
-//               Ingredient i1 = new Ingredient("Milk", "fdsfs12e1", "3 Monjitas", 1, true, "03/11/18", null);
-//                      Ingredient i2 = new Ingredient("Cereal", "fopsdf3", "Kellog's", 1, true, "06/10/18", null);
-//                      Recipe r = new Recipe("Cereal and Milk", "kmnkkn3l", "The simplest breakfast you'll ever make", 
-//                                      "Step 1: Pour cereal in bowl; Step 2: Pour milk in bowl", null);
-//                      r.addIngredient(i1);
-//                      r.addIngredient(i2);
-//                      Ingredient i3 = new Ingredient("Milk", "fdsfs12e1", "Silk", 1, true, "03/11/18", null);
-//                      Ingredient i4 = new Ingredient("Cereal", "fopsdf3", "Fruit Loops", 1, true, "06/10/18", null);
-//                      Recipe r2 = new Recipe("Cerealy and Milky", "kmnkkn3l", "The simplest breakfast you'll ever make", 
-//                                      "Step 1: Pour cereal in bowl; Step 2: Pour milk in bowl", null);
-//                      r.addIngredient(i3);
-//                      r.addIngredient(i4);
-//               ArrayList<Recipe> recipes = new ArrayList<>();
-//               recipes.add(r);
-//               recipes.add(r2);
-//               return recipes.get(id);
-//       }
 }
