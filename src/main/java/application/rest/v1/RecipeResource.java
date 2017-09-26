@@ -322,7 +322,7 @@ public class RecipeResource {
             		return Response.noContent().build();
             	
             	//Found recipe is returned to the user
-            	return Response.ok(recipe).build();
+            	return Response.ok(recipe.next()).build();
             	
             	
                 /*HttpGet getRecipe = new HttpGet("https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/queries/analyze?q=" + query);
