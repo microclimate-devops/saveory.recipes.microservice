@@ -77,7 +77,7 @@ public class RecipeResource {
         	MongoCursor<Document> recipeIterator;
         	
         	//If the user does a query
-        	if(!name.equals("")){
+        	if(name != null){
         		//Creation of query document
         		Document query = new Document("name", name);
         		
