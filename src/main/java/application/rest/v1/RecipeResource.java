@@ -303,11 +303,28 @@ public class RecipeResource {
         }
         
         
-        @GET
+         @GET
          @Path("/{recipeId}")
          @Produces(MediaType.APPLICATION_JSON)
-         public void getRecipe(@PathParam("recipeId") String query){
-                String showRecipeResponse;
+         public Response getRecipe(@PathParam("recipeId") String query){
+                //Retrievement of the mongo database and recipe collection
+            	MongoDatabase database = mongoClient.getDatabase(db_name);
+            	MongoCollection<Document> recipeCollection = database.getCollection(collection_name);
+            	
+            	//Query is converted to a document
+            	Document queryDoc = new Document("id", query);
+            	
+            	//Query Document is used to find the corresponding recipe
+            	MongoCursor<Document> recipe = recipeCollection.find(queryDoc).iterator();
+            		
+            	//If no recipe is found no content response is returned
+            	if(!recipe.hasNext())
+            		return Response.noContent().build();
+            	
+            	//Found recipe is returned to the user
+            	return Response.ok(recipe).build();
+            	
+            	
                 /*HttpGet getRecipe = new HttpGet("https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/queries/analyze?q=" + query);
                 getRecipe.addHeader("X-Mashape-Key", "EL3PByCPCAmshIKkZlrZvwsXPgVVp1PKD3MjsnhRbGZj3YLPli");
                 getRecipe.addHeader("X-Mashape-Host", "spoonacular-recipe-food-nutrition-v1.p.mashape.com");
