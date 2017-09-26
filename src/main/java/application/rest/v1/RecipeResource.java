@@ -288,6 +288,7 @@ public class RecipeResource {
     				ingredient = currentIngredients.get(i);
     				if(ingredient.containsKey("Milk"))
     					ingredient.append("coco", "loco");
+    				currentIngredients.set(i, ingredient);
     				
     				//Store its name and verify if it is milk
 //        				String name = (String) ingredient.get("name");
