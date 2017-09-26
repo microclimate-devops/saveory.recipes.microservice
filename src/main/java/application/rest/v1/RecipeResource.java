@@ -262,18 +262,18 @@ public class RecipeResource {
         	//Pantry service request to get current user's pantry (hard coded currently and just for tracing)
         	String pantry = RecipeManager.getUserPantry("59bae6bc46e0fb00012e87b5");
         	//It is converted into a JSONArray
-        	JSONArray pantryJSON = new JSONArray("[" + pantry + "]");
-        	//Variable used for iterations
-        	JSONObject curr;
-        	//ArrayList that will hold user's ingredients
+//        	JSONArray pantryJSON = new JSONArray("[" + pantry + "]");
+//        	//Variable used for iterations
+//        	JSONObject curr;
+//        	//ArrayList that will hold user's ingredients
         	ArrayList<String> pantryIngredients = new ArrayList<>();
-        	//We Iterate through the pantryJSON to get the ingredient names
-        	for(int j = 0; j < pantryJSON.length(); j++){
-        		//Hold current in a JSONObject variable
-        		curr = (JSONObject) pantryJSON.get(j);
-        		//Store current JSONObject ingredient name in pantryIngredients (verify lowercase later)
-        		pantryIngredients.add(curr.get("ingredient").toString().toLowerCase());
-        	}
+//        	//We Iterate through the pantryJSON to get the ingredient names
+//        	for(int j = 0; j < pantryJSON.length(); j++){
+//        		//Hold current in a JSONObject variable
+//        		curr = (JSONObject) pantryJSON.get(j);
+//        		//Store current JSONObject ingredient name in pantryIngredients (verify lowercase later)
+//        		pantryIngredients.add(curr.get("ingredient").toString().toLowerCase());
+//        	}
         	
         	//List to add all of the recipes
         	BasicDBList list = new BasicDBList();
@@ -319,7 +319,7 @@ public class RecipeResource {
         		list.add(currentRecipe);
         	}
         	//Modified Recipe List is returned
-        	return list.toString();
+        	return pantry;//list.toString();
         }
         
         
