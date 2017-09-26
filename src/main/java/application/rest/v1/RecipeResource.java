@@ -260,7 +260,20 @@ public class RecipeResource {
         	MongoCursor<Document> recipeIterator = recipeCollection.find().iterator();
         	
         	//Pantry service request to get current user's pantry (hard coded currently and just for tracing)
-        	//String pantry = RecipeManager.getUserPantry("59bae6bc46e0fb00012e87b5");
+        	String pantry = RecipeManager.getUserPantry("59bae6bc46e0fb00012e87b5");
+        	//It is converted into a JSONArray
+        	JSONArray pantryJSON = new JSONArray(pantry);
+        	//Variable used for iterations
+        	JSONObject curr;
+        	//ArrayList that will hold user's ingredients
+        	ArrayList<String> pantryIngredients = new ArrayList<>();
+        	//We Iterate through the pantryJSON to get the ingredient names
+        	for(int j = 0; j < pantryJSON.length(); j++){
+        		//Hold current in a JSONObject variable
+        		curr = (JSONObject) pantryJSON.get(j);
+        		//Store current JSONObject ingredient name in pantryIngredients (verify lowercase later)
+        		pantryIngredients.add(curr.get("name").toString().toLowerCase());
+        	}
         	
         	//List to add all of the recipes
         	BasicDBList list = new BasicDBList();
@@ -284,14 +297,19 @@ public class RecipeResource {
     				ingredient = currentIngredients.get(i);
     				
     				//Verifies one specific ingredient (used later to validate pantry ingredients)
-    				if(ingredient.getString("name").equalsIgnoreCase("Milk")){
+    				if(pantryIngredients.contains(ingredient.getString("name"))){
     					
 	    				//Appends a value that validates if the user has enough ingredients
-    					ingredient.append("coco", "loco");
-    					
-    					//Modified ingredient Document is set into the current index in the ArrayList
-	    				currentIngredients.set(i, ingredient);
+    					ingredient.append("has", "1");
+    					//TODO validate quantity
     				}
+    				
+    				else{
+    					//Ingredient is no inside the users pantry
+    					ingredient.append("has", "0");
+    				}
+    				//Modified ingredient Document is set into the current index in the ArrayList
+    				currentIngredients.set(i, ingredient);
     				
         		}
     			//New Modified ArrayList replaces the old ArrayList
