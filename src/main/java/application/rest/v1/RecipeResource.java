@@ -299,6 +299,7 @@ public class RecipeResource {
     				
 //        				
         		}
+    			currentDoc.put("ïngredients", currentIngredients);
         			//}	
         			//currentDoc.put("coco", "loco");
         		//String version of adding documents
