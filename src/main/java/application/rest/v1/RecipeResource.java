@@ -274,7 +274,7 @@ public class RecipeResource {
     				if(currentQuantity != null){
     					
     					//If the user has more or equal quantity needed 
-    					if(currentQuantity >= currentIngredient.getDouble("quantity")){
+    					if(currentQuantity >= Double.parseDouble(currentIngredient.getString("quantity"))){
 		    				//Appends a value that validates if the user has enough ingredients
 	    					currentIngredient.append("has", "2");
     					}
