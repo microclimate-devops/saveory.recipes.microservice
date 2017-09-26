@@ -267,16 +267,25 @@ public class RecipeResource {
     				//We hold the current ingredient in a variable
     				currentIngredient = currentRecipeIngredients.get(i);
     				
-    				//Verifies one specific ingredient (used later to validate pantry ingredients)
-    				if(userIngredients.get(currentIngredient.getString("name").toLowerCase()) != null){
+    				//We try to obtain the quantity of this ingredient that the user has in the pantry
+    				Double currentQuantity = userIngredients.get(currentIngredient.getString("name").toLowerCase());
+    				
+    				//Verifies if the user has the ingredient
+    				if(currentQuantity != null){
     					
-	    				//Appends a value that validates if the user has enough ingredients
-    					currentIngredient.append("has", "1");
-    					//TODO validate quantity
+    					//If the user has more or equal quantity needed 
+    					if(currentQuantity >= currentIngredient.getDouble("quantity")){
+		    				//Appends a value that validates if the user has enough ingredients
+	    					currentIngredient.append("has", "2");
+    					}
+    					else{
+    						//The user has the ingredient but not enough quantity
+    						currentIngredient.append("has", "1");
+    					}
     				}
     				
     				else{
-    					//Ingredient is no inside the users pantry
+    					//Ingredient is not inside the user's pantry
     					currentIngredient.append("has", "0");
     				}
     				//Modified ingredient Document is set into the current index in the ArrayList
