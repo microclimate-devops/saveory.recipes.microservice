@@ -69,13 +69,26 @@ public class RecipeResource {
 
     	@GET
         @Produces(MediaType.APPLICATION_JSON)
-        public Response getRecipes() throws JsonParseException, JsonMappingException, IOException{
+        public Response getRecipes(
+        	@QueryParam("name") String name) throws JsonParseException, JsonMappingException, IOException{
         	//Retrievement of the mongo database and recipe collection
         	MongoDatabase database = mongoClient.getDatabase(db_name);
         	MongoCollection<Document> recipeCollection = database.getCollection(collection_name);
+        	MongoCursor<Document> recipeIterator;
+        	
+        	//If the user does a query
+        	if(!name.equals("")){
+        		//Creation of query document
+        		Document query = new Document("name", name);
         		
-        	//Iterator used to go through recipe collection JSONs 
-        	MongoCursor<Document> recipeIterator = recipeCollection.find().iterator();
+        		//Query document is used to find all recipes with similar name
+        		recipeIterator = recipeCollection.find(query).iterator();
+        	}
+        	//If there is no query
+        	else{
+	        	//Iterator used to go through recipe collection JSONs 
+	        	recipeIterator = recipeCollection.find().iterator();
+        	}
         	
         	//Pantry service request to get current user's pantry (hard coded currently and just for tracing)
         	HashMap<String, Double> userIngredients = RecipeManager.getUserIngredients("59bae6bc46e0fb00012e87b5");
@@ -136,132 +149,61 @@ public class RecipeResource {
         }
         
         @GET
-        @Path("/test6")
-        @Produces(MediaType.TEXT_PLAIN)
-        public String getRecipes2() throws JsonParseException, JsonMappingException, IOException{
-        	//Retrievement of the mongo database and recipe collection
+        @Path("/{recipeId}")
+        @Produces(MediaType.APPLICATION_JSON)
+        public Response getRecipe(@PathParam("recipeId") String query){
+            //Retrievement of the mongo database and recipe collection
         	MongoDatabase database = mongoClient.getDatabase(db_name);
         	MongoCollection<Document> recipeCollection = database.getCollection(collection_name);
+        	
+        	//Query is converted to a document
+        	Document queryDoc = new Document("id", query);
+        	
+        	//Query Document is used to find the corresponding recipe
+        	MongoCursor<Document> recipe = recipeCollection.find(queryDoc).iterator();
         		
-        	//Iterator used to go through recipe collection JSONs 
-        	MongoCursor<Document> recipeIterator = recipeCollection.find().iterator();
+        	//If no recipe is found no content response is returned
+        	if(!recipe.hasNext())
+        		return Response.noContent().build();
         	
-        	//Pantry service request to get current user's pantry (hard coded currently and just for tracing)
-        	HashMap<String, Double> userIngredients = RecipeManager.getUserIngredients("59bae6bc46e0fb00012e87b5");
+        	//Found recipe is returned to the user
+        	return Response.ok(recipe.next()).build();
         	
-        	//List to add all of the recipes
-        	BasicDBList list = new BasicDBList();
         	
-        	//ArrayList and Document variables for next iterations
-        	ArrayList<Document> currentRecipeIngredients;
-        	Document currentIngredient;
-        	
-        	//Iteration continues while the iterator still has documents
-        	while(recipeIterator.hasNext()){
-        		//Holds next document of the current recipe JSONObject
-        		Document currentRecipe = recipeIterator.next();
-        		
-    			//We get the current recipe ingredients convert its value into an ArrayList of Documents
-    			currentRecipeIngredients =  (ArrayList<Document>) currentRecipe.get("ingredients");
-    			
-    			//We iterate through its JSONObjects
-    			for(int i = 0; i < currentRecipeIngredients.size(); i++){
-        				
-    				//We hold the current ingredient in a variable
-    				currentIngredient = currentRecipeIngredients.get(i);
-    				
-    				//We try to obtain the quantity of this ingredient that the user has in the pantry
-    				Double currentQuantity = userIngredients.get(currentIngredient.getString("name").toLowerCase());
-    				
-    				//Verifies if the user has the ingredient
-    				if(currentQuantity != null){
-    					
-    					//If the user has more or equal quantity needed 
-    					if(currentQuantity >= Double.parseDouble(currentIngredient.getString("quantity"))){
-		    				//Appends a value that validates if the user has enough ingredients
-	    					currentIngredient.append("has", "2");
-    					}
-    					else{
-    						//The user has the ingredient but not enough quantity
-    						currentIngredient.append("has", "1");
-    					}
-    				}
-    				
-    				else{
-    					//Ingredient is not inside the user's pantry
-    					currentIngredient.append("has", "0");
-    				}
-    				//Modified ingredient Document is set into the current index in the ArrayList
-    				currentRecipeIngredients.set(i, currentIngredient);
-    				
-        		}
-    			//New Modified ArrayList replaces the old ArrayList
-    			currentRecipe.replace("ingredients", currentRecipeIngredients);
-        		
-        		//Current modified Recipe is added into the list to return
-        		list.add(currentRecipe);
-        	}
-        	//Modified Recipe List is returned
-        	return list.toString();
-        }
-        
-        
-         @GET
-         @Path("/{recipeId}")
-         @Produces(MediaType.APPLICATION_JSON)
-         public Response getRecipe(@PathParam("recipeId") String query){
-                //Retrievement of the mongo database and recipe collection
-            	MongoDatabase database = mongoClient.getDatabase(db_name);
-            	MongoCollection<Document> recipeCollection = database.getCollection(collection_name);
-            	
-            	//Query is converted to a document
-            	Document queryDoc = new Document("id", query);
-            	
-            	//Query Document is used to find the corresponding recipe
-            	MongoCursor<Document> recipe = recipeCollection.find(queryDoc).iterator();
-            		
-            	//If no recipe is found no content response is returned
-            	if(!recipe.hasNext())
-            		return Response.noContent().build();
-            	
-            	//Found recipe is returned to the user
-            	return Response.ok(recipe.next()).build();
-            	
-            	
-                /*HttpGet getRecipe = new HttpGet("https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/queries/analyze?q=" + query);
-                getRecipe.addHeader("X-Mashape-Key", "EL3PByCPCAmshIKkZlrZvwsXPgVVp1PKD3MjsnhRbGZj3YLPli");
-                getRecipe.addHeader("X-Mashape-Host", "spoonacular-recipe-food-nutrition-v1.p.mashape.com");
-                HttpResponse getRecipeResponse;
+            /*HttpGet getRecipe = new HttpGet("https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/queries/analyze?q=" + query);
+            getRecipe.addHeader("X-Mashape-Key", "EL3PByCPCAmshIKkZlrZvwsXPgVVp1PKD3MjsnhRbGZj3YLPli");
+            getRecipe.addHeader("X-Mashape-Host", "spoonacular-recipe-food-nutrition-v1.p.mashape.com");
+            HttpResponse getRecipeResponse;
 
-                try{
-                        //Execute request
-                        getRecipeResponse = httpclient.execute(getRecipe);
-                        HttpEntity respEntity = getRecipeResponse.getEntity();
+            try{
+                    //Execute request
+                    getRecipeResponse = httpclient.execute(getRecipe);
+                    HttpEntity respEntity = getRecipeResponse.getEntity();
 
-                        //Check if the response entity is there
-                        if(respEntity != null){
-                                showRecipeResponse = EntityUtils.toString(respEntity);
-                        }else{
-                        	showRecipeResponse = "{\"status\":\"failure, no response entity from backend when retrieving a recipe\"}";
-                        }
-                }
-                catch (Exception e) {
-                        showRecipeResponse = "{\"status\":\"failed while executing GET request to the backend for a recipe\", \"error\":\""+e.getMessage()+"\"}";
-                }
+                    //Check if the response entity is there
+                    if(respEntity != null){
+                            showRecipeResponse = EntityUtils.toString(respEntity);
+                    }else{
+                    	showRecipeResponse = "{\"status\":\"failure, no response entity from backend when retrieving a recipe\"}";
+                    }
+            }
+            catch (Exception e) {
+                    showRecipeResponse = "{\"status\":\"failed while executing GET request to the backend for a recipe\", \"error\":\""+e.getMessage()+"\"}";
+            }
 
-                return Response.ok(showRecipeResponse).build();
+            return Response.ok(showRecipeResponse).build();
 
-                /*HttpResponse<JsonNode> response = Unirest.get("https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/queries/analyze?q=salmon+with+fusilli+and+no+nuts")
-                .header("X-Mashape-Key", "EL3PByCPCAmshIKkZlrZvwsXPgVVp1PKD3MjsnhRbGZj3YLPli")
-                .header("X-Mashape-Host", "spoonacular-recipe-food-nutrition-v1.p.mashape.com")
-                .asJson();
-                JSONObject recipe = response.getBody().getObject();
-                //JSONArray results = responsejson.getJSONArray("results");
-                return recipe;
-                }
-                catch (Exception e){
-                //HttpResponse<JsonNode> response = null;
-                return "Nope";
-                 */
+            /*HttpResponse<JsonNode> response = Unirest.get("https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/queries/analyze?q=salmon+with+fusilli+and+no+nuts")
+            .header("X-Mashape-Key", "EL3PByCPCAmshIKkZlrZvwsXPgVVp1PKD3MjsnhRbGZj3YLPli")
+            .header("X-Mashape-Host", "spoonacular-recipe-food-nutrition-v1.p.mashape.com")
+            .asJson();
+            JSONObject recipe = response.getBody().getObject();
+            //JSONArray results = responsejson.getJSONArray("results");
+            return recipe;
+            }
+            catch (Exception e){
+            //HttpResponse<JsonNode> response = null;
+            return "Nope";
+             */
         }
 }
