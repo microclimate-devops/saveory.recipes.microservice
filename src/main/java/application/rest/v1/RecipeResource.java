@@ -278,7 +278,7 @@ public class RecipeResource {
         		Document currentDoc = recipeIterator.next();
         		
     			//We convert its value into a JSONArray
-    			currentIngredients =  (JSONArray) currentDoc.get("\"ingredients\"");
+    			currentIngredients =  (JSONArray) currentDoc.get("ingredients");
     			
     			//We iterate through its JSONObjects
     			for(int i = 0; i < currentIngredients.length(); i++){
