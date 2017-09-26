@@ -259,9 +259,6 @@ public class RecipeResource {
         	//Iterator used to go through recipe collection JSONs 
         	MongoCursor<Document> recipeIterator = recipeCollection.find().iterator();
         	
-        	//Object Mapper for Recipes
-        	ObjectMapper recipeMapper = new ObjectMapper();
-        	
         	//Pantry service request to get current user's pantry (hard coded currently and just for tracing)
         	//String pantry = RecipeManager.getUserPantry("59bae6bc46e0fb00012e87b5");
         	
@@ -275,45 +272,36 @@ public class RecipeResource {
         	//Iteration continues while the iterator still has documents
         	while(recipeIterator.hasNext()){
         		//Holds next document of the current recipe JSONObject
-        		Document currentDoc = recipeIterator.next();
+        		Document currentRecipe = recipeIterator.next();
         		
     			//We convert its value into an ArrayList of Documents
-    			currentIngredients =  (ArrayList<Document>) currentDoc.get("ingredients");
+    			currentIngredients =  (ArrayList<Document>) currentRecipe.get("ingredients");
     			
     			//We iterate through its JSONObjects
     			for(int i = 0; i < currentIngredients.size(); i++){
         				
     				//We hold the current ingredient in a variable
     				ingredient = currentIngredients.get(i);
-    						
+    				
+    				//Verifies one specific ingredient (used later to validate pantry ingredients)
     				if(ingredient.getString("name").equalsIgnoreCase("Milk")){
-	    				ingredient.append("coco", "loco");
+    					
+	    				//Appends a value that validates if the user has enough ingredients
+    					ingredient.append("coco", "loco");
+    					
+    					//Modified ingredient Document is set into the current index in the ArrayList
 	    				currentIngredients.set(i, ingredient);
     				}
-    				//Store its name and verify if it is milk
-//        				String name = (String) ingredient.get("name");
-//        				if(name.equalsIgnoreCase("Milk")){
-    					
-    				//We append a document into that object (to alert if the user has it or not)
-    				//ingredient.append("coco", "loco");
     				
-//        				
         		}
-    			currentDoc.replace("ingredients", currentIngredients);
-        			//}	
-        			//currentDoc.put("coco", "loco");
-        		//String version of adding documents
-        		//recipeJSON = recipeJSON.concat(recipeIterator.next().toJson());
+    			//New Modified ArrayList replaces the old ArrayList
+    			currentRecipe.replace("ingredients", currentIngredients);
         		
-        		//Current document is added into the list
-        		list.add(currentDoc);
+        		//Current modified Recipe is added into the list to return
+        		list.add(currentRecipe);
         	}
-        		
-//        	List<Recipe> recipeList = recipeMapper.readValue(JSON.serialize(
-//        			list.toString().substring(0,list.toString().length()-1))
-//        			, new TypeReference<List<Recipe>>(){});
-        	
-        	return list.toString();//recipeList.get(1);
+        	//Modified Recipe List is returned
+        	return list.toString();
         }
         
         
