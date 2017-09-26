@@ -10,6 +10,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import org.apache.http.HttpEntity;
@@ -77,7 +78,7 @@ public class RecipeResource {
         	MongoCursor<Document> recipeIterator = recipeCollection.find().iterator();
         	
         	//Pantry service request to get current user's pantry (hard coded currently and just for tracing)
-        	String pantry = RecipeManager.getUserPantry("59bae6bc46e0fb00012e87b5");
+        	//String pantry = RecipeManager.getUserPantry("59bae6bc46e0fb00012e87b5");
         	
         	//List to add all of the recipes
         	BasicDBList list = new BasicDBList();
@@ -129,23 +130,6 @@ public class RecipeResource {
         	
         }
         
-        @GET
-        @Path("/test2")
-        @Produces(MediaType.APPLICATION_JSON)
-        public Response getUserPantry(
-        		@QueryParam("username") String username
-        		){
-        	
-        	//Gets the user's pantry ingredients using the username in the query
-        	String pantry = RecipeManager.getUserPantry(username);
-//        	JSONObject userPantry = (JSONObject) JSON.parse(pantry);
-//        	ObjectMapper pantryMapper = new ObjectMapper();
-//        	pantryMapper.readValue(userPantry, Pantry);
-        	//Get 1 recipe to compare its ingredients with the user's **TODO**
-        	
-        	
-        	return Response.ok(pantry).build();
-        }
         
         @GET
         @Path("/test3")
@@ -260,69 +244,47 @@ public class RecipeResource {
         	MongoCursor<Document> recipeIterator = recipeCollection.find().iterator();
         	
         	//Pantry service request to get current user's pantry (hard coded currently and just for tracing)
-        	String pantry = RecipeManager.getUserPantry("59bae6bc46e0fb00012e87b5");
-        	
-        	//It is converted into a JSONObject
-        	JSONObject pantryJSON = new JSONObject(pantry);
-        	
-        	//We get the pantry array from the JSONObject
-        	JSONArray pantryArray = (JSONArray) pantryJSON.get("pantry");
-        	
-        	//Variable to iterate
-        	JSONObject curr;
-        	
-        	//ArrayList that will hold user's ingredients
-        	ArrayList<String> pantryIngredients = new ArrayList<>();
-        	
-        	//We Iterate through the pantryJSON to get the ingredient names
-        	for(int j = 0; j < pantryArray.length(); j++){
-        		
-        		//Hold current in a JSONObject variable
-        		curr = (JSONObject) pantryArray.get(j);
-        		
-        		//Store current JSONObject ingredient name in pantryIngredients
-        		pantryIngredients.add(curr.getString("ingredient"));
-        	}
+        	HashMap<String, Double> userIngredients = RecipeManager.getUserIngredients("59bae6bc46e0fb00012e87b5");
         	
         	//List to add all of the recipes
         	BasicDBList list = new BasicDBList();
         	
         	//ArrayList and Document variables for next iterations
-        	ArrayList<Document> currentIngredients;
-        	Document ingredient;
+        	ArrayList<Document> currentRecipeIngredients;
+        	Document currentIngredient;
         	
         	//Iteration continues while the iterator still has documents
         	while(recipeIterator.hasNext()){
         		//Holds next document of the current recipe JSONObject
         		Document currentRecipe = recipeIterator.next();
         		
-    			//We convert its value into an ArrayList of Documents
-    			currentIngredients =  (ArrayList<Document>) currentRecipe.get("ingredients");
+    			//We get the current recipe ingredients convert its value into an ArrayList of Documents
+    			currentRecipeIngredients =  (ArrayList<Document>) currentRecipe.get("ingredients");
     			
     			//We iterate through its JSONObjects
-    			for(int i = 0; i < currentIngredients.size(); i++){
+    			for(int i = 0; i < currentRecipeIngredients.size(); i++){
         				
     				//We hold the current ingredient in a variable
-    				ingredient = currentIngredients.get(i);
+    				currentIngredient = currentRecipeIngredients.get(i);
     				
     				//Verifies one specific ingredient (used later to validate pantry ingredients)
-    				if(pantryIngredients.contains(ingredient.getString("name").toLowerCase())){
+    				if(userIngredients.get(currentIngredient.getString("name").toLowerCase()) != null){
     					
 	    				//Appends a value that validates if the user has enough ingredients
-    					ingredient.append("has", "1");
+    					currentIngredient.append("has", "1");
     					//TODO validate quantity
     				}
     				
     				else{
     					//Ingredient is no inside the users pantry
-    					ingredient.append("has", "0");
+    					currentIngredient.append("has", "0");
     				}
     				//Modified ingredient Document is set into the current index in the ArrayList
-    				currentIngredients.set(i, ingredient);
+    				currentRecipeIngredients.set(i, currentIngredient);
     				
         		}
     			//New Modified ArrayList replaces the old ArrayList
-    			currentRecipe.replace("ingredients", currentIngredients);
+    			currentRecipe.replace("ingredients", currentRecipeIngredients);
         		
         		//Current modified Recipe is added into the list to return
         		list.add(currentRecipe);

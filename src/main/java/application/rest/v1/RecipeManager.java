@@ -48,8 +48,9 @@ public class RecipeManager {
 	static HttpClient httpclient = HttpClientBuilder.create().build();
 	
 	
-	public static String getUserPantry(String username){
+	public static JSONArray getUserPantry(String username){
 		String showPantryResponse = "";
+		JSONArray pantryArray = new JSONArray();
 		HttpGet getPantry = new HttpGet("http://pantry-service:9080/Pantry/pantry/" + username);
 		try{
             //Execute request
@@ -59,6 +60,12 @@ public class RecipeManager {
             //Check if the response entity is there
             if(entity != null){
                     showPantryResponse = EntityUtils.toString(entity);
+                    
+                    //It is converted into a JSONObject
+                	JSONObject pantryJSON = new JSONObject(showPantryResponse);
+                	
+                	//We get the pantry array from the JSONObject
+                	pantryArray = (JSONArray) pantryJSON.get("pantry");
             }
             //Edit response to failure and no response
             else{
@@ -72,7 +79,8 @@ public class RecipeManager {
                 					+ "for a recipe\", \"error\":\""+e.getMessage()+"\"}";
         }
 		
-		return showPantryResponse;
+		return pantryArray;
+	}
 	//Old Implementation (w. Suzzie's Pantry Code)
 //		return showPantryResponse;
 //		String user = RecipeManager.getUser(username);
@@ -88,7 +96,6 @@ public class RecipeManager {
 //        
 //    	return pantryArray.toString();
 	
-	}
 	//Not necesary anymore (for now)
 //	public static String getUser(String username){
 //		String showUserResponse;
@@ -115,6 +122,31 @@ public class RecipeManager {
 //        
 //        return showUserResponse;
 //	}
+	
+	public static HashMap<String, Double> getUserIngredients(String username){
+		//We create the Map to be returned with the ingredients and their quantity
+		HashMap<String, Double> ingredients = new HashMap<>();
+		
+		//We get the pantry array from the JSONObject
+    	JSONArray pantryArray = getUserPantry(username);
+    	
+    	//Variable to iterate
+    	JSONObject curr;
+    	
+    	//We Iterate through the pantryJSON to get the ingredient names
+    	for(int j = 0; j < pantryArray.length(); j++){
+    		
+    		//Hold current in a JSONObject variable
+    		curr = (JSONObject) pantryArray.get(j);
+    		
+    		//Store current JSONObject ingredient name in pantryIngredients
+    		ingredients.put(curr.getString("ingredient"), curr.getDouble("quantity"));
+    	}
+    	
+    	
+    	return ingredients;
+	}
+	
 	
 	public static String getRecipes(){
 		MongoDatabase database = mongoClient.getDatabase(db_name);
