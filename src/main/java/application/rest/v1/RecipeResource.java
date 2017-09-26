@@ -262,7 +262,7 @@ public class RecipeResource {
         	//Pantry service request to get current user's pantry (hard coded currently and just for tracing)
         	String pantry = RecipeManager.getUserPantry("59bae6bc46e0fb00012e87b5");
         	//It is converted into a JSONArray
-        	JSONArray pantryJSON = new JSONArray(pantry);
+        	JSONArray pantryJSON = new JSONArray("[" + pantry + "]");
         	//Variable used for iterations
         	JSONObject curr;
         	//ArrayList that will hold user's ingredients
