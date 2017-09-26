@@ -266,19 +266,19 @@ public class RecipeResource {
         	JSONObject pantryJSON = new JSONObject(pantry);
         	
         	//We get the pantry array from the JSONObject
-        	ArrayList<Document> pantryArray = (ArrayList<Document>) pantryJSON.get("pantry");
+        	JSONArray pantryArray = (JSONArray) pantryJSON.get("pantry");
         	
         	//Variable to iterate
-        	Document curr;
+        	JSONObject curr;
         	
         	//ArrayList that will hold user's ingredients
         	ArrayList<String> pantryIngredients = new ArrayList<>();
         	
         	//We Iterate through the pantryJSON to get the ingredient names
-        	for(int j = 0; j < pantryArray.size(); j++){
+        	for(int j = 0; j < pantryArray.length(); j++){
         		
         		//Hold current in a JSONObject variable
-        		curr = pantryArray.get(j);
+        		curr = (JSONObject) pantryArray.get(j);
         		
         		//Store current JSONObject ingredient name in pantryIngredients (verify lowercase later)
         		pantryIngredients.add(curr.get("ingredient").toString().toLowerCase());
