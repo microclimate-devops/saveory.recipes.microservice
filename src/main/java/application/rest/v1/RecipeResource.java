@@ -278,7 +278,7 @@ public class RecipeResource {
         		Document currentDoc = recipeIterator.next();
         		
         		//We verify that it is the ingredients document
-        		if(currentDoc.containsKey("\"ingredients\"")){
+        		//if(currentDoc.containsKey("\"ingredients\"")){
         			
         			//We convert its value into a JSONArray
         			currentIngredients = new JSONArray((ArrayList<String>)currentDoc.get("\"ingredients\""));
@@ -297,7 +297,7 @@ public class RecipeResource {
         					ingredient.append("coco", "loco");
 //        				}
         			}
-        		}
+        		//}
         		
         		//String version of adding documents
         		//recipeJSON = recipeJSON.concat(recipeIterator.next().toJson());
