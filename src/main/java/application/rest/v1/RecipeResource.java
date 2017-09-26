@@ -290,12 +290,12 @@ public class RecipeResource {
         				ingredient = (JSONObject) currentIngredients.get(i);
         				
         				//Store its name and verify if it is milk
-        				String name = (String) ingredient.get("name");
-        				if(name.equalsIgnoreCase("Milk")){
+//        				String name = (String) ingredient.get("name");
+//        				if(name.equalsIgnoreCase("Milk")){
         					
         					//We append a document into that object (to alert if the user has it or not)
         					ingredient.append("coco", "loco");
-        				}
+//        				}
         			}
         		}
         		
