@@ -272,7 +272,7 @@ public class RecipeResource {
         		//Hold current in a JSONObject variable
         		curr = (JSONObject) pantryJSON.get(j);
         		//Store current JSONObject ingredient name in pantryIngredients (verify lowercase later)
-        		pantryIngredients.add(curr.get("name").toString().toLowerCase());
+        		pantryIngredients.add(curr.get("ingredient").toString().toLowerCase());
         	}
         	
         	//List to add all of the recipes
