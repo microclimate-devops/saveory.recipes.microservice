@@ -6,6 +6,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -78,11 +79,16 @@ public class RecipeResource {
         	
         	//If the user does a query
         	if(name != null){
+        		if(!name.isEmpty()){
         		//Creation of query document
         		Document query = new Document("name", name);
         		
         		//Query document is used to find all recipes with similar name
         		recipeIterator = recipeCollection.find(query).iterator();
+        		}
+        		else{
+        			return Response.noContent().build();
+        		}
         	}
         	//If there is no query
         	else{
@@ -206,4 +212,33 @@ public class RecipeResource {
             return "Nope";
              */
         }
+        
+        @GET
+    	@Path("/test")
+    	public Response addUser(@HeaderParam("user_token") String user_token) {
+        	//Retrievement of the mongo database and recipe collection
+        	MongoDatabase database = mongoClient.getDatabase(db_name);
+        	MongoCollection<Document> userCollection = database.getCollection(auxCollection);
+        	
+        	//Query is converted to a document
+        	Document queryDoc = new Document("_id", user_token);
+        	
+        	//Query Document is used to find the corresponding recipe
+        	MongoCursor<Document> userIterator = userCollection.find(queryDoc).iterator();
+        	
+        	//Verifies if a user was found
+        	if(userIterator.hasNext()){
+        		//Gets found user
+        		Document user = userIterator.next();
+        		//Returns its name
+        		return Response.status(200)
+            			.entity(user_token + " is called, username : " + user.getString("name"))
+            			.build();
+        	}
+        	//If no user was found returns a no content Response
+    		return Response.status(403)
+    			.entity(user_token + " user was not found")
+    			.build();
+
+    	}
 }
