@@ -58,6 +58,7 @@ import org.mongojack.*;
 import com.mongodb.DBCollection;
 //import org.mongodb.DB;
 import com.mongodb.DBObject;
+import org.bson.types.ObjectId;
 
 @Path("recipes")
 public class RecipeResource {
@@ -70,7 +71,8 @@ public class RecipeResource {
 
     	@GET
         @Produces(MediaType.APPLICATION_JSON)
-        public Response getRecipes(
+        public Response getRecipes( 
+        	@HeaderParam("user_token") String user_token,
         	@QueryParam("name") String name) throws JsonParseException, JsonMappingException, IOException{
         	//Retrievement of the mongo database and recipe collection
         	MongoDatabase database = mongoClient.getDatabase(db_name);
@@ -97,7 +99,7 @@ public class RecipeResource {
         	}
         	
         	//Pantry service request to get current user's pantry (hard coded currently and just for tracing)
-        	HashMap<String, Double> userIngredients = RecipeManager.getUserIngredients("59bae6bc46e0fb00012e87b5");
+        	HashMap<String, Double> userIngredients = RecipeManager.getUserIngredients(user_token);
         	
         	//List to add all of the recipes
         	BasicDBList list = new BasicDBList();
@@ -221,7 +223,7 @@ public class RecipeResource {
         	MongoCollection<Document> userCollection = database.getCollection(auxCollection);
         	
         	//Query is converted to a document
-        	Document queryDoc = new Document("_id", user_token);
+        	Document queryDoc = new Document("_id", new ObjectId(user_token));
         	
         	//Query Document is used to find the corresponding recipe
         	MongoCursor<Document> userIterator = userCollection.find(queryDoc).iterator();
@@ -236,7 +238,7 @@ public class RecipeResource {
             			.build();
         	}
         	//If no user was found returns a no content Response
-    		return Response.status(403)
+    		return Response.status(204)
     			.entity(user_token + " user was not found")
     			.build();
 

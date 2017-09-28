@@ -48,10 +48,10 @@ public class RecipeManager {
 	static HttpClient httpclient = HttpClientBuilder.create().build();
 	
 	
-	public static JSONArray getUserPantry(String username){
+	public static JSONArray getUserPantry(String user_token){
 		String showPantryResponse = "";
 		JSONArray pantryArray = new JSONArray();
-		HttpGet getPantry = new HttpGet("http://pantry-service:9080/Pantry/pantry/" + username);
+		HttpGet getPantry = new HttpGet("http://pantry-service:9080/Pantry/pantry/" + user_token);
 		try{
             //Execute request
             HttpResponse getPantryResponse = httpclient.execute(getPantry);
@@ -123,12 +123,12 @@ public class RecipeManager {
 //        return showUserResponse;
 //	}
 	
-	public static HashMap<String, Double> getUserIngredients(String username){
+	public static HashMap<String, Double> getUserIngredients(String user_token){
 		//We create the Map to be returned with the ingredients and their quantity
 		HashMap<String, Double> ingredients = new HashMap<>();
 		
 		//We get the pantry array from the JSONObject
-    	JSONArray pantryArray = getUserPantry(username);
+    	JSONArray pantryArray = getUserPantry(user_token);
     	
     	//Variable to iterate
     	JSONObject curr;
