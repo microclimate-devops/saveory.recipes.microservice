@@ -241,4 +241,22 @@ public class RecipeResource {
     			.build();
 
     	}
+        
+        @GET
+    	@Path("/test2")
+    	public Response yummlyTest() {
+        	
+    		
+    		/*HttpResponse<JsonNode> response = Unirest.get("https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/queries/analyze?q=salmon+with+fusilli+and+no+nuts")
+            .header("X-Mashape-Key", "EL3PByCPCAmshIKkZlrZvwsXPgVVp1PKD3MjsnhRbGZj3YLPli")
+            .header("X-Mashape-Host", "spoonacular-recipe-food-nutrition-v1.p.mashape.com")
+            .asJson();
+            JSONObject recipe = response.getBody().getObject();
+            //JSONArray results = responsejson.getJSONArray("results");
+            return recipe;
+			*/
+        	
+        	return Response.ok().build();
+    	}
+        
 }
