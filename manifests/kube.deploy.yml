@@ -20,7 +20,7 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: "recipedeployment"
+  name: "recipeservice"
 spec:
   # this replicas value is default
   # modify it according to your case
