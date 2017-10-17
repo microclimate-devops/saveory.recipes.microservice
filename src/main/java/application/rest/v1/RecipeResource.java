@@ -1,78 +1,57 @@
 package application.rest.v1;
 
-import java.util.List;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.client.HttpClient;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonArray;
-import javax.json.JsonReader;
+import org.bson.Document;
+import org.bson.types.ObjectId;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-import com.mongodb.ServerAddress;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoCollection;
-import org.bson.Document;
 import com.mongodb.client.MongoCursor;
-import static com.mongodb.client.model.Filters.*;
-import com.mongodb.client.result.DeleteResult;
-import static com.mongodb.client.model.Updates.*;
-import com.mongodb.client.result.UpdateResult;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.util.JSON;
-//import com.ibm.json.java.JSONObject;
-import org.json.JSONObject;
-import org.json.JSONArray;
-import java.util.Map;
-import java.io.IOException;
-import java.io.StringReader;
-
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper; 
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import org.mongojack.*;
-import com.mongodb.DBCollection;
-//import org.mongodb.DB;
-import com.mongodb.DBObject;
-import org.bson.types.ObjectId;
 
 @Path("recipes")
 public class RecipeResource {
 		private static String db_name = "saveory_app";
 		private static String db_client_uri = "mongodb://sapphires:saveoryArmory@sapphires-db.rtp.raleigh.ibm.com/saveory_app";
 		private static String collection_name = "recipes";
-		private static String auxCollection = "users";
+		private static String aux_collection = "users";
+		private static String yummly_ID = "6f6cfa82";
+		private static String yummly_key = "721e1ba8abd629ec369fd3a18fab6001";
+		
 		MongoClient mongoClient = new MongoClient(new MongoClientURI(db_client_uri));
         
 
     	@GET
         @Produces(MediaType.APPLICATION_JSON)
         public Response getRecipes( 
-        	@HeaderParam("user_token") String user_token,
+        	//@HeaderParam("user_token") String user_token,
+        	@QueryParam("user_token") String user_token, //For development purposes
         	@QueryParam("name") String name) throws JsonParseException, JsonMappingException, IOException{
         	//Retrievement of the mongo database and recipe collection
         	MongoDatabase database = mongoClient.getDatabase(db_name);
@@ -175,7 +154,7 @@ public class RecipeResource {
         		return Response.noContent().build();
         	
         	//Found recipe is returned to the user
-        	return Response.ok(recipe.next()).build();
+        	return Response.ok(recipe.next().toJson()).build();
         	
         	
             /*HttpGet getRecipe = new HttpGet("https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/queries/analyze?q=" + query);
@@ -220,7 +199,7 @@ public class RecipeResource {
     	public Response addUser(@HeaderParam("user_token") String user_token) {
         	//Retrievement of the mongo database and recipe collection
         	MongoDatabase database = mongoClient.getDatabase(db_name);
-        	MongoCollection<Document> userCollection = database.getCollection(auxCollection);
+        	MongoCollection<Document> userCollection = database.getCollection(aux_collection);
         	
         	//Query is converted to a document
         	Document queryDoc = new Document("_id", new ObjectId(user_token));
@@ -246,19 +225,113 @@ public class RecipeResource {
         
         @GET
     	@Path("/test2")
-    	public Response yummlyTest() {
+        @Produces(MediaType.APPLICATION_JSON)
+    	public Response yummlyTest() throws UnirestException {
+        	//Retrievement of the mongo database and recipe collection
+        	MongoDatabase database = mongoClient.getDatabase(db_name);
+        	MongoCollection<Document> recipesCollection = database.getCollection(collection_name);
         	
-    		
-    		/*HttpResponse<JsonNode> response = Unirest.get("https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/queries/analyze?q=salmon+with+fusilli+and+no+nuts")
-            .header("X-Mashape-Key", "EL3PByCPCAmshIKkZlrZvwsXPgVVp1PKD3MjsnhRbGZj3YLPli")
-            .header("X-Mashape-Host", "spoonacular-recipe-food-nutrition-v1.p.mashape.com")
-            .asJson();
-            JSONObject recipe = response.getBody().getObject();
-            //JSONArray results = responsejson.getJSONArray("results");
-            return recipe;
-			*/
+        	//Variable Definitions
+        	String apiResponse;
+        	BasicDBList list = new BasicDBList();
+        	BasicDBObject apiObject = new BasicDBObject();
         	
-        	return Response.ok().build();
+        	//Http Client Setup
+        	HttpClient httpclient = HttpClientBuilder.create().build();
+        	HttpGet request = new HttpGet("http://api.yummly.com/v1/api/recipes?"
+        			+ "_app_id=" + yummly_ID + "&_app_key=" + yummly_key + "&maxResult=3");
+        	
+        	
+        	//Recipe variables (//X = Available)
+        	String name; //X
+        	String id; //X
+        	String _id;
+        	String author; //X
+        	ArrayList<BasicDBObject> tag; //X
+        	String description;
+        	String instructions;
+        	List<BasicDBObject> ingredients; //X
+        	String time; //X
+        	List<String> imageURLList; //X
+        	String imageURL;//X
+        	
+        	//Variables used to parse/add recipes to return
+        	BasicDBObject parsedRecipe = new BasicDBObject();
+        	Document verificationQuery = new Document();
+        	MongoCursor<Document> recipeIterator;
+        	//int idCounter = 0; Currently using yummlyAPI id instead
+        	
+        	try{
+                //Execute request
+                HttpResponse getAPIResponse = httpclient.execute(request);
+                HttpEntity entity = getAPIResponse.getEntity();
+
+                //Check if the response entity is there
+                if(entity != null){
+                        apiResponse = EntityUtils.toString(entity);
+                        
+                        //It is converted into a BasicDBObject
+                    	apiObject = (BasicDBObject) JSON.parse(apiResponse);
+                       
+                    	//We retrieve the recipes (inside "matches" array) and assign it to an ArrayList<BasicDBObject> 
+                    	ArrayList<BasicDBObject> recipeList = (ArrayList<BasicDBObject>) apiObject.get("matches");
+                    	
+                    	//We iterate through the recipes to parse it into our recipe object format
+                    	for(BasicDBObject current : recipeList){ 
+                    		
+                    		//Get the desired recipe values from the current BasicDBObject
+                    		name = current.getString("recipeName");
+                    		author = current.getString("sourceDisplayName");
+                    		BasicDBObject attributes = (BasicDBObject) JSON.parse(current.getString("attributes"));
+                    		tag = (ArrayList<BasicDBObject>) attributes.get("course");
+                    		id = current.getString("id");
+                    		ingredients = (ArrayList<BasicDBObject>) current.get("ingredients");
+                    		time = current.getString("totalTimeInSeconds");
+                    		imageURLList = (ArrayList<String>) current.get("smallImageUrls");
+                    		imageURL = imageURLList.get(0);
+                    		imageURL = imageURL.substring(0, imageURL.length()-3).concat("-c");
+                    		
+                    		//A BsonObject is formed with the retrieved values
+                    		parsedRecipe.append("name", name)
+                    					.append("id", id)
+                    					.append("author", author)
+                    					.append("tag", tag)
+                    					.append("ingredients", ingredients)
+                    					.append("time", time)
+                    					.append("imageURL", imageURL);
+                    		
+                    		//Adds recipe into mongoDB recipe collection and into the list to return
+                    		verificationQuery.append("id", id);
+                    		
+                    		//We verify if this recipe does not already exist in the recipes Collection
+                    		recipeIterator = recipesCollection.find(verificationQuery).iterator();
+                    		if(!recipeIterator.hasNext())
+                    			recipesCollection.insertOne(Document.parse(parsedRecipe.toString()));
+                    		
+                    		//We add the recipe to our list to return
+                    		list.add(parsedRecipe);
+                    		
+                    		//Maintains the recipes id correctly with respect to the recipes being added
+                    		//idCounter++;
+                    	}
+                    	
+                    	//The list is converted into a string for the response
+                    	apiResponse = list.toString();
+                    	
+                }
+                //Edit response to failure and no response
+                else{
+                	apiResponse = "{\"Status\":\"Failure, no response entity from backend "
+                						+ "when retrieving recipes from Yummly\"}";
+                }
+            }
+    		//Catch possible exception
+            catch (Exception e) {
+            	apiResponse = "{\"Status\":\"Failed while executing GET request to the Yummly API\""
+                    					+ ", \"Error\":\""+e.getMessage()+"\"}";
+            }
+        	//Builds and returns response
+    		return Response.ok(apiResponse).build();
     	}
         
 }
