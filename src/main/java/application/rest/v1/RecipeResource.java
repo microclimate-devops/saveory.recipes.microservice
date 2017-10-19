@@ -226,7 +226,7 @@ public class RecipeResource {
         @GET
     	@Path("/test2")
         @Produces(MediaType.APPLICATION_JSON)
-    	public Response yummlyTest() throws UnirestException {
+    	public Response yummlyTest(@QueryParam("q") String q){
         	//Retrievement of the mongo database and recipe collection
         	MongoDatabase database = mongoClient.getDatabase(db_name);
         	MongoCollection<Document> recipesCollection = database.getCollection(collection_name);
@@ -239,7 +239,7 @@ public class RecipeResource {
         	//Http Client Setup
         	HttpClient httpclient = HttpClientBuilder.create().build();
         	HttpGet request = new HttpGet("http://api.yummly.com/v1/api/recipes?"
-        			+ "_app_id=" + yummly_ID + "&_app_key=" + yummly_key + "&maxResult=3");
+        			+ "_app_id=" + yummly_ID + "&_app_key=" + yummly_key + "&maxResult=100&q=" + q);
         	
         	
         	//Recipe variables (//X = Available)
