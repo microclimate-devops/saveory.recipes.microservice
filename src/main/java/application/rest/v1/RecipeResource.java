@@ -133,9 +133,6 @@ public class RecipeResource {
 	    				//We hold the current ingredient in a variable
 	    				currentIngredient = currentRecipeIngredients.get(i);
 	    				
-	    				
-	    					
-	    				
 	    				//We try to obtain the quantity of this ingredient that the user has in the pantry
 	    				Double currentQuantity = userIngredients.get(currentIngredient.getString("name").toLowerCase());
 	    				
