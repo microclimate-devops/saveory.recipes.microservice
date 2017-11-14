@@ -1,6 +1,8 @@
 package application.rest.v1;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,22 +49,22 @@ public class RecipeResource {
 		MongoClient mongoClient = new MongoClient(new MongoClientURI(db_client_uri));
         
 
-    	@GET
+		@GET
         @Produces(MediaType.APPLICATION_JSON)
         public Response getRecipes( 
         	//@HeaderParam("user_token") String user_token,
         	@QueryParam("user_token") String user_token, //For development purposes
-        	@QueryParam("name") String name) throws JsonParseException, JsonMappingException, IOException{
+        	@QueryParam("search") String search) throws JsonParseException, JsonMappingException, IOException{
         	//Retrievement of the mongo database and recipe collection
         	MongoDatabase database = mongoClient.getDatabase(db_name);
         	MongoCollection<Document> recipeCollection = database.getCollection(collection_name);
         	MongoCursor<Document> recipeIterator;
         	
         	//If the user does a query
-        	if(name != null){
-        		if(!name.isEmpty()){
+        	if(search != null){
+        		if(!search.isEmpty()){
         		//Creation of query document
-        		Document query = new Document("name", name);
+        		Document query = new Document("search", search);
         		
         		//Query document is used to find all recipes with similar name
         		recipeIterator = recipeCollection.find(query).iterator();
@@ -84,46 +86,79 @@ public class RecipeResource {
         	BasicDBList list = new BasicDBList();
         	
         	//ArrayList and Document variables for next iterations
-        	ArrayList<Document> currentRecipeIngredients;
+        	ArrayList<Document> currentRecipeIngredients = new ArrayList<>();
+        	ArrayList<String> currentRecipeIngredientsAPI;
         	Document currentIngredient;
+        	ArrayList<String> hasList = new ArrayList<>();
         	
         	//Iteration continues while the iterator still has documents
         	while(recipeIterator.hasNext()){
         		//Holds next document of the current recipe JSONObject
         		Document currentRecipe = recipeIterator.next();
         		
-    			//We get the current recipe ingredients convert its value into an ArrayList of Documents
-    			currentRecipeIngredients =  (ArrayList<Document>) currentRecipe.get("ingredients");
-    			
-    			//We iterate through its JSONObjects
-    			for(int i = 0; i < currentRecipeIngredients.size(); i++){
-        				
-    				//We hold the current ingredient in a variable
-    				currentIngredient = currentRecipeIngredients.get(i);
-    				
-    				//We try to obtain the quantity of this ingredient that the user has in the pantry
-    				Double currentQuantity = userIngredients.get(currentIngredient.getString("name").toLowerCase());
-    				
-    				//Verifies if the user has the ingredient
-    				if(currentQuantity != null){
-    					
-    					//If the user has more or equal quantity needed 
-    					if(currentQuantity >= Double.parseDouble(currentIngredient.getString("quantity"))){
-		    				//Appends a value that validates if the user has enough ingredients
-	    					currentIngredient.append("has", "2");
-    					}
-    					else{
-    						//The user has the ingredient but not enough quantity
-    						currentIngredient.append("has", "1");
-    					}
-    				}
-    				else{
-    					//Ingredient is not inside the user's pantry
-    					currentIngredient.append("has", "0");
-    				}
-    				//Modified ingredient Document is set into the current index in the ArrayList
-    				currentRecipeIngredients.set(i, currentIngredient);
-    				
+        		try{
+        			
+        			currentRecipeIngredientsAPI = (ArrayList<String>) currentRecipe.get("ingredients");
+        			
+        			//We iterate through its Strings
+	    			for(String currentIngredientAPI : currentRecipeIngredientsAPI){
+	    				
+	    				//We try to obtain the quantity of this ingredient that the user has in the pantry
+	    				Double currentQuantity = userIngredients.get(currentIngredientAPI.toLowerCase());
+	    				
+	    				//Verifies if the user has the ingredient
+	    				if(currentQuantity != null){
+	    					//User has ingredient
+	    					hasList.add("1");
+	    				}
+	    				else{
+	    					//Ingredient is not inside the user's pantry
+	    					hasList.add("0");
+	    				}
+	    			}
+	    			//New hasList ArrayList is added to the Recipe
+	    			currentRecipe.append("has", hasList);
+	        		
+	        		//Current modified Recipe is added into the list to return
+	        		list.add(currentRecipe);
+	        		}
+        	
+        		catch(Exception e){
+	    			//We get the current recipe ingredients convert its value into an ArrayList of Documents
+	    			currentRecipeIngredients =  (ArrayList<Document>) currentRecipe.get("ingredients");
+	    			
+	    			//We iterate through its JSONObjects
+	    			for(int i = 0; i < currentRecipeIngredients.size(); i++){
+	        				
+	    				//We hold the current ingredient in a variable
+	    				currentIngredient = currentRecipeIngredients.get(i);
+	    				
+	    				
+	    					
+	    				
+	    				//We try to obtain the quantity of this ingredient that the user has in the pantry
+	    				Double currentQuantity = userIngredients.get(currentIngredient.getString("name").toLowerCase());
+	    				
+	    				//Verifies if the user has the ingredient
+	    				if(currentQuantity != null){
+	    					currentIngredient.append("has", "1");
+	    					//If the user has more or equal quantity needed 
+	    					//if(currentQuantity >= Double.parseDouble(currentIngredient.getString("quantity"))){
+			    			//	//Appends a value that validates if the user has enough ingredients
+		    				//	currentIngredient.append("has", "2");
+	    					//}
+	    					//else{
+	    					//	//The user has the ingredient but not enough quantity
+	    					//	currentIngredient.append("has", "1");
+	    					//}
+	    				}
+	    				else{
+	    					//Ingredient is not inside the user's pantry
+	    					currentIngredient.append("has", "0");
+	    				}
+	    				//Modified ingredient Document is set into the current index in the ArrayList
+	    				currentRecipeIngredients.set(i, currentIngredient);
+	    			}
         		}
     			//New Modified ArrayList replaces the old ArrayList
     			currentRecipe.replace("ingredients", currentRecipeIngredients);
@@ -327,11 +362,119 @@ public class RecipeResource {
             }
     		//Catch possible exception
             catch (Exception e) {
+            	String stackTrace = "";
+            	for(StackTraceElement current : e.getStackTrace())
+            		stackTrace = stackTrace + current.toString() + "\n";
             	apiResponse = "{\"Status\":\"Failed while executing GET request to the Yummly API\""
-                    					+ ", \"Error\":\""+e.getMessage()+"\"}";
+                    					+ ", \"Error\":\""+e.getMessage()+"\""
+            							+ ", \"Stack Trace\":\"" + stackTrace + "\"}";
             }
         	//Builds and returns response
     		return Response.ok(apiResponse).build();
     	}
+        
+        @GET
+    	@Path("/test3")
+      //@Consumes(MediaType.APPLICATION_JSON) 
+        @Produces(MediaType.APPLICATION_JSON)
+    	public Response advancedSearch(){
+        	
+        	//Http Client Setup
+        	HttpClient httpclient = HttpClientBuilder.create().build();
+        	HttpGet request = new HttpGet("http://localhost:9080/RecipeService/recipes/test4");
+ 
+        	//Variable Definitions
+        	String apiResponse;
+        	String yummlyRequest = "http://api.yummly.com/v1/api/recipes?"
+        			+ "_app_id=" + yummly_ID + "&_app_key=" + yummly_key;
+        	BasicDBObject apiObject = new BasicDBObject();
+        	ArrayList<String> allowedIngredients;
+        	ArrayList<String> excludedIngredients;
+        	ArrayList<String> allowedAllergies;
+        	int loopSize;
+        	
+        	try{
+                //Execute request
+                HttpResponse getAPIResponse = httpclient.execute(request);
+                HttpEntity entity = getAPIResponse.getEntity();
+
+                //Check if the response entity is there
+                if(entity != null){
+                	apiResponse = EntityUtils.toString(entity);
+                    
+                    //It is converted into a BasicDBObject
+                	apiObject = (BasicDBObject) JSON.parse(apiResponse);
+                	
+                	allowedIngredients = (ArrayList<String>) apiObject.get("allowedIngredients");
+                	excludedIngredients = (ArrayList<String>) apiObject.get("excludedIngredients");
+                	allowedAllergies = (ArrayList<String>) apiObject.get("allowedAllergies");
+                	
+                	for(String current : allowedIngredients)
+                		yummlyRequest = yummlyRequest.concat("&allowedIngredient[]=" + current);
+                	for(String current : excludedIngredients)
+                		yummlyRequest = yummlyRequest.concat("&excludedIngredient[]=" + current);
+                	for(String current : allowedAllergies)
+                		yummlyRequest = yummlyRequest.concat("&allowedAllergy[]=" + current);
+                	
+                	//Execute request
+                	request.reset();
+                	request = new HttpGet(yummlyRequest);
+                    getAPIResponse = httpclient.execute(request);
+                    entity = getAPIResponse.getEntity();
+                    
+                    if(entity != null){
+                    	BasicDBObject yummlyResponse = BasicDBObject.parse(EntityUtils.toString(entity));
+                    	yummlyResponse.append("url", yummlyRequest);
+                    	apiResponse = yummlyResponse.toString();
+                    	//apiResponse = EntityUtils.toString(entity);
+                    }
+                    
+                    else{
+                    	apiResponse = "{\"Status\":\"Failure, no response entity from backend "
+        						+ "when retrieving recipes from Yummly\"}";
+                    }
+	                	
+                }
+                //Edit response to failure and no response
+                else{
+                	apiResponse = "{\"Status\":\"Failure, no response entity from backend "
+                						+ "when retrieving recipes from Yummly\"}";
+                }
+            }
+    		//Catch possible exception
+            catch (Exception e) {
+            	String stackTrace = "";
+            	for(StackTraceElement current : e.getStackTrace())
+            		stackTrace = stackTrace + current.toString() + "\n";
+            	apiResponse = "{\"Status\":\"Failed while executing GET request to the Yummly API\""
+                    					+ ", \"Error\":\""+e.getMessage()+"\""
+            							+ ", \"Stack Trace\":\"" + stackTrace + "\"}";
+            }
+        	
+        	
+        	return Response.ok(apiResponse).build();
+        }
+        
+        @GET
+    	@Path("/test4")
+        @Produces(MediaType.APPLICATION_JSON)
+    	public Response filterParameters(){
+        	BasicDBObject filters = new BasicDBObject();
+        	ArrayList<String> allowedIngredients = new ArrayList<>();
+        	ArrayList<String> excludedIngredients = new ArrayList<>();
+        	ArrayList<String> allowedAllergies = new ArrayList<>();
+        	
+        	allowedIngredients.add("coconut");
+        	allowedIngredients.add("chocolate");
+        	excludedIngredients.add("pepper");
+        	allowedAllergies.add("396%5EDairy-Free");
+        	
+        	filters.append("allowedIngredients", allowedIngredients);
+        	filters.append("excludedIngredients", excludedIngredients);
+        	filters.append("allowedAllergies", allowedAllergies);
+        	
+        	return Response.ok(filters.toString()).build();
+        
+        }
         
 }

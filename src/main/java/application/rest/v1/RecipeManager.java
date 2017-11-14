@@ -140,7 +140,7 @@ public class RecipeManager {
     		curr = (JSONObject) pantryArray.get(j);
     		
     		//Store current JSONObject ingredient name in pantryIngredients
-    		ingredients.put(curr.getString("ingredient"), curr.getDouble("quantity"));
+    		ingredients.put(curr.getString("ingredient").toLowerCase(), curr.getDouble("quantity"));
     	}
     	
     	
