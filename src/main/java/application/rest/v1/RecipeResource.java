@@ -87,7 +87,7 @@ public class RecipeResource {
         	
         	//ArrayList and Document variables for next iterations
         	ArrayList<Document> currentRecipeIngredients = new ArrayList<>();
-        	ArrayList<String> currentRecipeIngredientsAPI;
+        	ArrayList<String> currentRecipeIngredientsAPI = new ArrayList<>();
         	Document currentIngredient;
         	ArrayList<String> hasList = new ArrayList<>();
         	
@@ -163,8 +163,11 @@ public class RecipeResource {
 	    			}
         		}
     			//New Modified ArrayList replaces the old ArrayList
-    			currentRecipe.replace("ingredients", currentRecipeIngredients);
-        		
+    			if(currentRecipeIngredientsAPI.isEmpty())
+        			currentRecipe.replace("ingredients", currentRecipeIngredients);
+    			else
+    				currentRecipe.replace("ingredients", currentRecipeIngredientsAPI);
+    			
         		//Current modified Recipe is added into the list to return
         		list.add(currentRecipe);
         	}
