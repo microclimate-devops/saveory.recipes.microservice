@@ -103,6 +103,8 @@ public class RecipeResource {
         			//We iterate through its Strings
 	    			for(String currentIngredientAPI : currentRecipeIngredientsAPI){
 	    				
+	    				
+	    				
 	    				//We try to obtain the quantity of this ingredient that the user has in the pantry
 	    				Double currentQuantity = userIngredients.get(currentIngredientAPI.toLowerCase());
 	    				
@@ -117,10 +119,13 @@ public class RecipeResource {
 	    				}
 	    			}
 	    			//New hasList ArrayList is added to the Recipe
-	    			currentRecipe.append("has", hasList);
+	    			currentRecipe.append("has", hasList.toString());
 	        		
+	    			//Prepare hasList for next iteration
+	    			hasList.clear();
+	    			
 	        		//Current modified Recipe is added into the list to return
-	        		list.add(currentRecipe);
+	        		//list.add(currentRecipe);
 	        		}
         	
         		catch(Exception e){
