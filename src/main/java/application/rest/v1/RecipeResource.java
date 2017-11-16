@@ -131,11 +131,12 @@ public class RecipeResource {
 	    				}
 	    			}
 	    			//New hasList ArrayList is added to the Recipe
-	    			currentRecipe.append("has", hasList);
-	    			currentRecipe.append("matchingIngredients", matchingIngredients);
+	    			currentRecipe.append("has", hasList.toArray());
+	    			currentRecipe.append("matchingIngredients", matchingIngredients.toArray());
 	        		
 	    			//Prepare hasList for next iteration
 	    			hasList.clear();
+	    			matchingIngredients.clear();
 	    			
 	        		//Current modified Recipe is added into the list to return
 	        		//list.add(currentRecipe);
