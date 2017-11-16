@@ -165,7 +165,7 @@ public class RecipeManager {
 		    		currentIngredient = (JSONObject) pantryArray.get(j);
 		    		
 		    		//Hold the name of the current ingredient
-		    		currentName = currentIngredient.getString("name");
+		    		currentName = currentIngredient.getString("ingredient");
 		    		
 		    		//We split this name into separate words
 		    		words = currentName.toLowerCase().split(" ");
