@@ -81,6 +81,7 @@ public class RecipeResource {
         	
         	//Pantry service request to get current user's pantry (hard coded currently and just for tracing)
         	HashMap<String, Double> userIngredients = RecipeManager.getUserIngredients(user_token);
+        	HashMap<String, String> userIngredientWords = RecipeManager.getUserIngredientsWords(user_token);
         	
         	//List to add all of the recipes
         	BasicDBList list = new BasicDBList();
@@ -90,7 +91,9 @@ public class RecipeResource {
         	ArrayList<String> currentRecipeIngredientsAPI = new ArrayList<>();
         	Document currentIngredient;
         	ArrayList<String> hasList = new ArrayList<>();
-        	
+        	ArrayList<String> matchingIngredients = new ArrayList<>();
+        	String[] currentWordSplit;
+        	String match;
         	//Iteration continues while the iterator still has documents
         	while(recipeIterator.hasNext()){
         		//Holds next document of the current recipe JSONObject
@@ -103,8 +106,6 @@ public class RecipeResource {
         			//We iterate through its Strings
 	    			for(String currentIngredientAPI : currentRecipeIngredientsAPI){
 	    				
-	    				
-	    				
 	    				//We try to obtain the quantity of this ingredient that the user has in the pantry
 	    				Double currentQuantity = userIngredients.get(currentIngredientAPI.toLowerCase());
 	    				
@@ -112,6 +113,17 @@ public class RecipeResource {
 	    				if(currentQuantity != null){
 	    					//User has ingredient
 	    					hasList.add("1");
+	    					
+	    					//Current Ingredient name is split into words
+	    					currentWordSplit = currentIngredientAPI.toLowerCase().split(" ");
+	    					
+	    					//We verify if any of these words are found in the user ingredient words
+	    					for (int i = 0; i < currentWordSplit.length; i++){
+	    						match = userIngredientWords.get(currentWordSplit[i]);
+	    						//If one is equivalent we add it to the matching ingredients list
+	    						if(match != null)
+	    							matchingIngredients.add(match);
+	    					}
 	    				}
 	    				else{
 	    					//Ingredient is not inside the user's pantry
@@ -119,7 +131,8 @@ public class RecipeResource {
 	    				}
 	    			}
 	    			//New hasList ArrayList is added to the Recipe
-	    			currentRecipe.append("has", hasList.toString());
+	    			currentRecipe.append("has", hasList);
+	    			currentRecipe.append("matchingIngredients", matchingIngredients);
 	        		
 	    			//Prepare hasList for next iteration
 	    			hasList.clear();

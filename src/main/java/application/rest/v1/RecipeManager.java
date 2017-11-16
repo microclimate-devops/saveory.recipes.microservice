@@ -147,6 +147,40 @@ public class RecipeManager {
     	return ingredients;
 	}
 	
+	public static HashMap<String, String> getUserIngredientsWords(String user_token){
+		//We create the Map to be returned with the ingredients and their quantity
+				HashMap<String, String> ingredientsWords = new HashMap<>();
+				String currentName;
+				String[] words;
+				//We get the pantry array from the JSONObject
+		    	JSONArray pantryArray = getUserPantry(user_token);
+		    	
+		    	//Variable to iterate
+		    	JSONObject currentIngredient;
+		    	
+		    	//We Iterate through the pantryJSON to get the ingredient names
+		    	for(int j = 0; j < pantryArray.length(); j++){
+		    		
+		    		//Hold current in a JSONObject variable
+		    		currentIngredient = (JSONObject) pantryArray.get(j);
+		    		
+		    		//Hold the name of the current ingredient
+		    		currentName = currentIngredient.getString("name");
+		    		
+		    		//We split this name into separate words
+		    		words = currentName.toLowerCase().split(" ");
+		    		 
+		    		//We iterate through this words to add them into a map which has a key for each word
+		    		//and a value that references to the original word string
+		    		for(int i = 0; i < words.length; i++)
+		    			ingredientsWords.put(words[i], currentName);
+		    		
+		    	}
+		    	
+		    	//Return the split name to full name map
+		    	return ingredientsWords;
+	}
+	
 	
 	public static String getRecipes(){
 		MongoDatabase database = mongoClient.getDatabase(db_name);
