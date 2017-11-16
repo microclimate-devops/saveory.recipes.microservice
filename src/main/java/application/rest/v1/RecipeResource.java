@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -91,7 +92,7 @@ public class RecipeResource {
         	ArrayList<String> currentRecipeIngredientsAPI = new ArrayList<>();
         	Document currentIngredient;
         	ArrayList<String> hasList = new ArrayList<>();
-        	ArrayList<String> matchingIngredients = new ArrayList<>();
+        	HashSet<String> matchingIngredients = new HashSet<>();
         	String[] currentWordSplit;
         	String match;
         	//Iteration continues while the iterator still has documents
