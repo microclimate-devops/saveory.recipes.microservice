@@ -100,7 +100,7 @@ public class RecipeResource {
         		Document currentRecipe = recipeIterator.next();
         		
         		try{
-        			
+        			//We get the current recipe ingredients convert its value into an ArrayList of Strings
         			currentRecipeIngredientsAPI = (ArrayList<String>) currentRecipe.get("ingredients");
         			
         			//We iterate through its Strings
