@@ -76,7 +76,7 @@ public class RecipeResource {
         	//If there is no query
         	else{
 	        	//Iterator used to go through recipe collection JSONs 
-	        	recipeIterator = recipeCollection.find().iterator();
+	        	recipeIterator = recipeCollection.find(new Document("name", "CAP")).iterator();
         	}
         	
         	//Pantry service request to get current user's pantry (hard coded currently and just for tracing)
