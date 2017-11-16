@@ -64,7 +64,7 @@ public class RecipeResource {
         	if(search != null){
         		if(!search.isEmpty()){
         		//Creation of query document
-        		Document query = new Document("search", search);
+        		Document query = new Document("name", search);
         		
         		//Query document is used to find all recipes with similar name
         		recipeIterator = recipeCollection.find(query).iterator();
@@ -76,7 +76,7 @@ public class RecipeResource {
         	//If there is no query
         	else{
 	        	//Iterator used to go through recipe collection JSONs 
-	        	recipeIterator = recipeCollection.find(new Document("name", "Seafood Gumbo")).iterator();
+	        	recipeIterator = recipeCollection.find().iterator();
         	}
         	
         	//Pantry service request to get current user's pantry (hard coded currently and just for tracing)
