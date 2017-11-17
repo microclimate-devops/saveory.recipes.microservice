@@ -131,7 +131,7 @@ public class RecipeResource {
 	    					hasList.add("0");
 	    				}
 	    			}
-	    			//New hasList ArrayList is added to the Recipe
+	    			//New hasList and matchingIngredients ArrayList is added to the Recipe
 	    			currentRecipe.append("has", hasList.toArray());
 	    			currentRecipe.append("matchingIngredients", matchingIngredients.toArray());
 	        		
@@ -159,6 +159,17 @@ public class RecipeResource {
 	    				//Verifies if the user has the ingredient
 	    				if(currentQuantity != null){
 	    					currentIngredient.append("has", "1");
+	    					
+	    					//Current Ingredient name is split into words
+	    					currentWordSplit = currentIngredient.getString("name").toLowerCase().split(" ");
+	    					
+	    					//We verify if any of these words are found in the user ingredient words
+	    					for (int j = 0; i < currentWordSplit.length; j++){
+	    						match = userIngredientWords.get(currentWordSplit[j]);
+	    						//If one is equivalent we add it to the matching ingredients list
+	    						if(match != null)
+	    							matchingIngredients.add(match);
+	    					}
 	    					//If the user has more or equal quantity needed 
 	    					//if(currentQuantity >= Double.parseDouble(currentIngredient.getString("quantity"))){
 			    			//	//Appends a value that validates if the user has enough ingredients
@@ -173,6 +184,13 @@ public class RecipeResource {
 	    					//Ingredient is not inside the user's pantry
 	    					currentIngredient.append("has", "0");
 	    				}
+	    				//New matchingIngredients ArrayList is added to the Recipe
+	    				currentRecipe.append("matchingIngredients", matchingIngredients.toArray());
+		        		
+		    			//Prepare hasList for next iteration
+		    			hasList.clear();
+		    			matchingIngredients.clear();
+	    				
 	    				//Modified ingredient Document is set into the current index in the ArrayList
 	    				currentRecipeIngredients.set(i, currentIngredient);
 	    			}
