@@ -139,10 +139,9 @@ public class RecipeResource {
 	    			hasList.clear();
 	    			matchingIngredients.clear();
 	    			
-	        		//Current modified Recipe is added into the list to return
-	        		//list.add(currentRecipe);
 	        		}
-        	
+        		
+        		//Catches exception of the recipe list being one of the older versions
         		catch(Exception e){
 	    			//We get the current recipe ingredients convert its value into an ArrayList of Documents
 	    			currentRecipeIngredients =  (ArrayList<Document>) currentRecipe.get("ingredients");
