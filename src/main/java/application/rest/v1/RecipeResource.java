@@ -97,6 +97,7 @@ public class RecipeResource {
         	String match;
         	//Iteration continues while the iterator still has documents
         	while(recipeIterator.hasNext()){
+        		
         		//Holds next document of the current recipe JSONObject
         		Document currentRecipe = recipeIterator.next();
         		
