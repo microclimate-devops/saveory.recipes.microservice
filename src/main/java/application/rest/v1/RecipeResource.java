@@ -164,7 +164,7 @@ public class RecipeResource {
 	    					currentWordSplit = currentIngredient.getString("name").toLowerCase().split(" ");
 	    					
 	    					//We verify if any of these words are found in the user ingredient words
-	    					for (int j = 0; i < currentWordSplit.length; j++){
+	    					for (int j = 0; j < currentWordSplit.length; j++){
 	    						match = userIngredientWords.get(currentWordSplit[j]);
 	    						//If one is equivalent we add it to the matching ingredients list
 	    						if(match != null)
