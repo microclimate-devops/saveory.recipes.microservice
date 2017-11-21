@@ -192,13 +192,13 @@ public class RecipeResource {
 	    				currentRecipe.append("hasList", hasList.toArray());
 	    				currentRecipe.append("matchingIngredients", matchingIngredients.toArray());
 		        		
-		    			//Prepare hasList for next iteration
-		    			hasList.clear();
-		    			matchingIngredients.clear();
-	    				
 	    				//Modified ingredient Document is set into the current index in the ArrayList
 	    				currentRecipeIngredients.set(i, currentIngredient);
 	    			}
+	    			
+	    			//Prepare hasList for next iteration
+	    			hasList.clear();
+	    			matchingIngredients.clear();
         		}
     			//New Modified ArrayList replaces the old ArrayList
     			if(currentRecipeIngredientsAPI.isEmpty())
