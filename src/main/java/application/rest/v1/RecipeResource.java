@@ -64,8 +64,8 @@ public class RecipeResource {
         	//If the user does a query
         	if(search != null){
         		if(!search.isEmpty()){
-        		//Creation of query document
-        		Document query = new Document("name", search);
+        		//Creation of query document using a logical or string array search
+        		Document query = new Document("$text", new Document("$search", search));
         		
         		//Query document is used to find all recipes with similar name
         		recipeIterator = recipeCollection.find(query).iterator();
@@ -188,13 +188,12 @@ public class RecipeResource {
 	    					//currentIngredient.append("has", "0");
 	    					hasList.add("0");
 	    				}
-	    				//New matchingIngredients ArrayList is added to the Recipe
-	    				currentRecipe.append("hasList", hasList.toArray());
-	    				currentRecipe.append("matchingIngredients", matchingIngredients.toArray());
-		        		
 	    				//Modified ingredient Document is set into the current index in the ArrayList
 	    				currentRecipeIngredients.set(i, currentIngredient);
 	    			}
+	    			//New matchingIngredients ArrayList is added to the Recipe
+    				currentRecipe.append("hasList", hasList.toArray());
+    				currentRecipe.append("matchingIngredients", matchingIngredients.toArray());
 	    			
 	    			//Prepare hasList for next iteration
 	    			hasList.clear();
