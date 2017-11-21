@@ -158,8 +158,11 @@ public class RecipeResource {
 	    				
 	    				//Verifies if the user has the ingredient
 	    				if(currentQuantity != null){
+	    					
+	    					//If user has the ingredient a 1 is added to a hasList referencing this ingredients index
 	    					//currentIngredient.append("has", "1");
 	    					hasList.add("1");
+	    					
 	    					//Current Ingredient name is split into words
 	    					currentWordSplit = currentIngredient.getString("name").toLowerCase().split(" ");
 	    					
@@ -186,7 +189,7 @@ public class RecipeResource {
 	    					hasList.add("0");
 	    				}
 	    				//New matchingIngredients ArrayList is added to the Recipe
-	    				currentRecipe.append("matchingIngredients", hasList.toArray());
+	    				currentRecipe.append("hasList", hasList.toArray());
 	    				currentRecipe.append("matchingIngredients", matchingIngredients.toArray());
 		        		
 		    			//Prepare hasList for next iteration
