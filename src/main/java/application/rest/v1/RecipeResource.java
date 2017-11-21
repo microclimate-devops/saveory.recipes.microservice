@@ -158,8 +158,8 @@ public class RecipeResource {
 	    				
 	    				//Verifies if the user has the ingredient
 	    				if(currentQuantity != null){
-	    					currentIngredient.append("has", "1");
-	    					
+	    					//currentIngredient.append("has", "1");
+	    					hasList.add("1");
 	    					//Current Ingredient name is split into words
 	    					currentWordSplit = currentIngredient.getString("name").toLowerCase().split(" ");
 	    					
@@ -182,9 +182,11 @@ public class RecipeResource {
 	    				}
 	    				else{
 	    					//Ingredient is not inside the user's pantry
-	    					currentIngredient.append("has", "0");
+	    					//currentIngredient.append("has", "0");
+	    					hasList.add("0");
 	    				}
 	    				//New matchingIngredients ArrayList is added to the Recipe
+	    				currentRecipe.append("matchingIngredients", hasList.toArray());
 	    				currentRecipe.append("matchingIngredients", matchingIngredients.toArray());
 		        		
 		    			//Prepare hasList for next iteration
