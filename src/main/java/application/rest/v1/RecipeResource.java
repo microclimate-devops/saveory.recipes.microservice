@@ -178,7 +178,7 @@ public class RecipeResource {
 	    					//else{
 	    					//	//The user has the ingredient but not enough quantity
 	    					//	currentIngredient.append("has", "1");
-	    					//}
+	    					//} 
 	    				}
 	    				else{
 	    					//Ingredient is not inside the user's pantry
