@@ -40,8 +40,9 @@ import org.json.JSONObject;
 import org.json.JSONArray;
 
 public class RecipeManager {
-	private static String db_name = "saveory_app";
-	private static String db_client_uri = "mongodb://sapphires:saveoryArmory@sapphires-db.rtp.raleigh.ibm.com/saveory_app";
+	private static String db_name = System.getenv("MONGO_DATABASE_NAME");
+	private static String db_client_uri = "mongodb://"+System.getenv("MONGO_USER")+":"+System.getenv("MONGO_PWD")+"@"+
+		System.getenv("MONGO_HOST")+":"+System.getenv("MONGO_PORT")+"/"+RecipeManager.db_name;
 	private static String collection_name = "recipes";
 	private static MongoClient mongoClient = new MongoClient(new MongoClientURI(db_client_uri));
 	

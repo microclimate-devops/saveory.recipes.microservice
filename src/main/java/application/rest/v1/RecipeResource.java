@@ -40,12 +40,13 @@ import com.mongodb.util.JSON;
 
 @Path("recipes")
 public class RecipeResource {
-		private static String db_name = "saveory_app";
-		private static String db_client_uri = "mongodb://sapphires:saveoryArmory@sapphires-db.rtp.raleigh.ibm.com/saveory_app";
+		private static String db_name = System.getenv("MONGO_DATABASE_NAME");
+		private static String db_client_uri = "mongodb://"+System.getenv("MONGO_USER")+":"+System.getenv("MONGO_PWD")+"@"+
+			System.getenv("MONGO_HOST")+":"+System.getenv("MONGO_PORT")+"/"+RecipeResource.db_name;
 		private static String collection_name = "recipes";
 		private static String aux_collection = "users";
-		private static String yummly_ID = "6f6cfa82";
-		private static String yummly_key = "721e1ba8abd629ec369fd3a18fab6001";
+		private static String yummly_ID = System.getenv("YUMMLY_ID");
+		private static String yummly_key = System.getenv("YUMMLY_KEY");
 		
 		MongoClient mongoClient = new MongoClient(new MongoClientURI(db_client_uri));
         
