@@ -1,4 +1,4 @@
-## Microservice
+## Recipe Microservice
 Bluemix Microservice Starter in Java
 
 [![](https://img.shields.io/badge/bluemix-powered-blue.svg)](https://bluemix.net)
@@ -13,7 +13,7 @@ Bluemix Microservice Starter in Java
 
 ### Summary
 
-The Bluemix Microservice Starter in Java provides a starting point for creating Java microservice applications running on [WebSphere Liberty](https://developer.ibm.com/wasdev/).
+The Recipe Microservice manages every process related to recipe searches. Recipe searches are done by querying into the MongoDB recipes with matching ingredient names. It also interacts with the Pantry Microservice to obtain the users pantry ingredients to mark the ones that are in every recipe's ingredients list.
 
 To deploy this application to Bluemix using a toolchain click the **Create Toolchain** button.
 [![Create Toolchain](https://console.ng.bluemix.net/devops/graphics/create_toolchain_button.png)](https://console.ng.bluemix.net/devops/setup/deploy/)
@@ -25,6 +25,7 @@ To deploy this application to Bluemix using a toolchain click the **Create Toolc
   * [Java 8 JDK from IBM (AIX, Linux, z/OS, IBM i)](http://www.ibm.com/developerworks/java/jdk/),
     or [Download a Liberty server package](https://developer.ibm.com/assets/wasdev/#filter/assetTypeFilters=PRODUCT)
     that contains the IBM JDK (Windows, Linux)
+* [Microservice Builder] (https://developer.ibm.com/microservice-builder/#getStarted)
 
 ### Configuration
 The application is configured to provide JAX-RS REST capabilities, JNDI, JSON parsing and Contexts and Dependency Injection (CDI).
@@ -32,6 +33,8 @@ The application is configured to provide JAX-RS REST capabilities, JNDI, JSON pa
 These capabilities are provided through dependencies in the pom.xml file and Liberty features enabled in the server config file found in `src/main/liberty/config/server.xml`.
 
 ### Project contents
+The API implementation is done in the RecipeResource.java class. Main backend functions are processed in the RecipeManager.java class. Objects that were going to be originally used with mappers are the Ingredient, Recipe Ingredient and the Recipe (due to changes in JSON management and usage we discarded their use in the Recipe Microservice)
+
 The microservice application has a health endpoint which is accessible at `<host>:<port>/RecipeService/health`. The context root is set in the `src/main/webapp/WEB-INF/ibm-web-ext.xml` file. The ports are set in the pom.xml file and exposed to the CLI in the cli-config.yml file.
 
 The project contains Bluemix specific files that are used to deploy the application as part of a Bluemix DevOps flow. The `.bluemix` directory contains files used to define the Bluemix toolchain and pipeline for your application. The `manifest.yml` file specifies the name of your application in Bluemix, the timeout value during deployment and which services to bind to.
@@ -46,6 +49,10 @@ To build and run the application:
 1. `mvn install`
 1. `mvn liberty:run-server`
 
+To build and run the application using Bluemix CLI:
+1. `1bx dev build`
+1. `bx dev run`
+
 
 To run the application in Docker use the Docker file called `Dockerfile`. If you do not want to install Maven locally you can use `Dockerfile-tools` to build a container with Maven installed.
 
@@ -53,6 +60,8 @@ To run the application in Docker use the Docker file called `Dockerfile`. If you
 
 The application exposes the following endpoints:
 * Health endpoint: `<host>:<port>/<contextRoot>/health`
+
+* ADD LINK TO ENDPOINTS HERE
 
 The context root is set in the `src/main/webapp/WEB-INF/ibm-web-ext.xml` file. The ports are set in the pom.xml file and exposed to the CLI in the cli-config.yml file.
 
