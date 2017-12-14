@@ -50,7 +50,7 @@ To build and run the application:
 1. `mvn liberty:run-server`
 
 To build and run the application using Bluemix CLI:
-1. `1bx dev build`
+1. `bx dev build`
 1. `bx dev run`
 
 
