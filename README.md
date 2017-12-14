@@ -25,7 +25,7 @@ To deploy this application to Bluemix using a toolchain click the **Create Toolc
   * [Java 8 JDK from IBM (AIX, Linux, z/OS, IBM i)](http://www.ibm.com/developerworks/java/jdk/),
     or [Download a Liberty server package](https://developer.ibm.com/assets/wasdev/#filter/assetTypeFilters=PRODUCT)
     that contains the IBM JDK (Windows, Linux)
-* [Microservice Builder] (https://developer.ibm.com/microservice-builder/#getStarted)
+* [Microservice Builder](https://developer.ibm.com/microservice-builder/#getStarted)
 
 ### Configuration
 The application is configured to provide JAX-RS REST capabilities, JNDI, JSON parsing and Contexts and Dependency Injection (CDI).
