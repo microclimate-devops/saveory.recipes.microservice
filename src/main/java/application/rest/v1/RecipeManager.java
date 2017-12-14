@@ -184,29 +184,29 @@ public class RecipeManager {
 	
 	
 	public static String getRecipes(){
+		//Database is obtained through the mongo client
 		MongoDatabase database = mongoClient.getDatabase(db_name);
 		MongoCollection<Document> recipeCollection = database.getCollection(collection_name);
 		
-		//Document query = new Document().append("name","CAP");
-		//Document query2 = new Document().append("ingredients",[]);
-				
-		//MongoCursor<Document> recipe = rCollection.find(query);
-		
+		//We obtain an iterator using a the mongo find method
 		MongoCursor<Document> recipeIterator = recipeCollection.find().iterator();
 		
+		//A DB list is created, this will hold all of the found recipes
 		BasicDBList list = new BasicDBList();
-		while(recipeIterator.hasNext()){
-			Document doc = recipeIterator.next();
-			//list.add(doc);
-			//Document current = Document.parse((String) doc.get("ingredients"));
-			ArrayList<Document> currentIngredients = (ArrayList<Document>) doc.get("ingredients");
-			for(Document current : currentIngredients)
-				list.add(current);
-		}
 		
-		//QueryParam test case
-		//if(username != null)
-			//list.add(new Document().append("username", username));
+		//This will run meanwhile the iterator has a next recipe
+		while(recipeIterator.hasNext()){
+			//Current recipe is saved into a variable
+			Document doc = recipeIterator.next();
+			
+			//Ingredients from the current recipe are obtained as an ArrayList of documents
+			ArrayList<Document> currentIngredients = (ArrayList<Document>) doc.get("ingredients");
+			
+			//The ingredients are added into the DB list
+			for(Document current : currentIngredients)
+				list.add(current); 
+		}
+		//The list with the recipes is returned
 		return JSON.serialize(list);
 	}
 	
@@ -245,7 +245,7 @@ public class RecipeManager {
 //		return recipe; 
 //	}
 //	
-	
+	////////////////////////////////////////Not used////////////////////////////////////////////////////
 	public static void addToArray(Recipe[] list, Recipe recipe, int index){
 		list[index] = recipe;
 	}
