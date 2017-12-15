@@ -16,7 +16,7 @@ IBM Cloud Microservices Starter for Java - MicroProfile / Java EE
 
 ### Summary
 
-The Recipe Microservice manages every process related to recipe searches. Recipe searches are done by querying into the MongoDB recipes with matching ingredient names. It also interacts with the Pantry Microservice to obtain the users pantry ingredients to mark the ones that are in every recipe's ingredients list.
+The Recipe Microservice manages every process related to finding recipes. Recipe searches are powered by (Yummly)[https://developer.yummly.com/] results, stored or fresh from the API. Integration with saveory.pantry.microservice allows for smarter results and information gathering.
 
 To deploy this application to Bluemix using a toolchain click the **Create Toolchain** button.
 [![Create Toolchain](https://console.ng.bluemix.net/devops/graphics/create_toolchain_button.png)](https://console.ng.bluemix.net/devops/setup/deploy/)
@@ -36,7 +36,7 @@ The application is configured to provide JAX-RS REST capabilities, JNDI, JSON pa
 These capabilities are provided through dependencies in the pom.xml file and Liberty features enabled in the server config file found in `src/main/liberty/config/server.xml`.
 
 ### Project contents
-The API implementation is done in the RecipeResource.java class. Main backend functions are processed in the RecipeManager.java class. Objects that were going to be originally used with mappers are the Ingredient, Recipe Ingredient and the Recipe (due to changes in JSON management and usage we discarded their use in the Recipe Microservice)
+The API implementation is done in the RecipeResource.java class. Main backend functions are processed in the RecipeManager.java class. 
 
 The microservice application has a health endpoint which is accessible at `<host>:<port>/RecipeService/health`. The context root is set in the `src/main/webapp/WEB-INF/ibm-web-ext.xml` file. The ports are set in the pom.xml file and exposed to the CLI in the cli-config.yml file.
 
@@ -52,10 +52,9 @@ To build and run the application:
 1. `mvn install`
 1. `mvn liberty:run-server`
 
-To build and run the application using Bluemix CLI:
+To build and run the application using [Bluemix CLI](https://developer.ibm.com/microservice-builder/#getStarted):
 1. `bx dev build`
 1. `bx dev run`
-
 
 To run the application in Docker use the Docker file called `Dockerfile`. If you do not want to install Maven locally you can use `Dockerfile-tools` to build a container with Maven installed.
 
@@ -75,7 +74,7 @@ This project was generated using:
 * java-common v2.0.6
 * generator-liberty v5.1.2
 
-### Licenses
+#### Licenses
 
-- The LICENSE.IBM_Microservice_Builder applies to the project as a whole
-- The LICENSE applies to original source code located in the `src/main/java/application/database` and `src/main/java/application/rest/v1/` folders
+- The LICENSE.IBM_Microservice_Builder applies to the project as a whole and was provided by IBM Microservice Builder
+- The LICENSE applies to original source code located in the `src/main/java/application/rest/v1/` folder
