@@ -82,47 +82,6 @@ public class RecipeManager {
 		
 		return pantryArray;
 	}
-	//Old Implementation (w. Suzzie's Pantry Code)
-//		return showPantryResponse;
-//		String user = RecipeManager.getUser(username);
-//		if(user.contains("failure") || user.contains("failed") || user.equals(""))
-//			return user;
-//		
-//		//Changes received JSON from array to object
-//		user = user.substring(1, user.length() - 1); 
-//    	
-//    	//Read in the requested pantry as a JSON
-//    	JSONObject userJSON = new JSONObject(user);
-//    	JSONArray pantryArray = userJSON.getJSONArray("pantry");
-//        
-//    	return pantryArray.toString();
-	
-	//Not necesary anymore (for now)
-//	public static String getUser(String username){
-//		String showUserResponse;
-//		HttpGet getUser = new HttpGet("http://pantry-service:9080/Pantry/pantry/" + username);
-//
-//        try{
-//            //Execute request
-//            HttpResponse getUserResponse = httpclient.execute(getUser);
-//            HttpEntity entity = getUserResponse.getEntity();
-//
-//            //Check if the response entity is there
-//            if(entity != null){
-//                    showUserResponse = EntityUtils.toString(entity);
-//            }
-//            else{
-//            	showUserResponse = "{\"status\":\"failure, no response entity from backend "
-//            						+ "when retrieving the user's pantry\"}";
-//            }
-//        }
-//        catch (Exception e) {
-//        	showUserResponse = "{\"status\":\"failed while executing GET request to the backend "
-//                					+ "for a recipe\", \"error\":\""+e.getMessage()+"\"}";
-//        }
-//        
-//        return showUserResponse;
-//	}
 	
 	public static HashMap<String, Double> getUserIngredients(String user_token){
 		//We create the Map to be returned with the ingredients and their quantity

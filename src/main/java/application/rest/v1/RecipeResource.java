@@ -233,44 +233,10 @@ public class RecipeResource {
         	
         	//Found recipe is returned to the user
         	return Response.ok(recipe.next().toJson()).build();
-        	
-        	
-            /*HttpGet getRecipe = new HttpGet("https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/queries/analyze?q=" + query);
-            getRecipe.addHeader("X-Mashape-Key", "EL3PByCPCAmshIKkZlrZvwsXPgVVp1PKD3MjsnhRbGZj3YLPli");
-            getRecipe.addHeader("X-Mashape-Host", "spoonacular-recipe-food-nutrition-v1.p.mashape.com");
-            HttpResponse getRecipeResponse;
-
-            try{
-                    //Execute request
-                    getRecipeResponse = httpclient.execute(getRecipe);
-                    HttpEntity respEntity = getRecipeResponse.getEntity();
-
-                    //Check if the response entity is there
-                    if(respEntity != null){
-                            showRecipeResponse = EntityUtils.toString(respEntity);
-                    }else{
-                    	showRecipeResponse = "{\"status\":\"failure, no response entity from backend when retrieving a recipe\"}";
-                    }
-            }
-            catch (Exception e) {
-                    showRecipeResponse = "{\"status\":\"failed while executing GET request to the backend for a recipe\", \"error\":\""+e.getMessage()+"\"}";
-            }
-
-            return Response.ok(showRecipeResponse).build();
-
-            /*HttpResponse<JsonNode> response = Unirest.get("https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/queries/analyze?q=salmon+with+fusilli+and+no+nuts")
-            .header("X-Mashape-Key", "EL3PByCPCAmshIKkZlrZvwsXPgVVp1PKD3MjsnhRbGZj3YLPli")
-            .header("X-Mashape-Host", "spoonacular-recipe-food-nutrition-v1.p.mashape.com")
-            .asJson();
-            JSONObject recipe = response.getBody().getObject();
-            //JSONArray results = responsejson.getJSONArray("results");
-            return recipe;
-            }
-            catch (Exception e){
-            //HttpResponse<JsonNode> response = null;
-            return "Nope";
-             */
         }
+        
+        
+//////////////////////////////////Features Under Development/////////////////////////////////////////////////        
         
         @GET
     	@Path("/test")
