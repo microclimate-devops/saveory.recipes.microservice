@@ -74,3 +74,8 @@ This project was generated using:
 * generator-java v1.9.1
 * java-common v2.0.6
 * generator-liberty v5.1.2
+
+#### Licenses
+
+- The LICENSE.IBM_Microservice_Builder applies to the project as a whole
+- The LICENSE applies to original source code located in the `src/main/java/application/database` and `src/main/java/application/rest/v1/` folders
